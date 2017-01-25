@@ -6,11 +6,6 @@
 #define GO_LEFT 3
 #define GO_RIGHT 4
 
-//#define _DEBUG
-#if defined(_DEBUG)
-FILE *d;
-#endif
-
 struct object msgsend;
 struct object msgbox;
 struct object filesend;

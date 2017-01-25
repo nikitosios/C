@@ -10,7 +10,9 @@ int update_screen (void)
 	init_pair(2, COLOR_BLACK,   COLOR_WHITE);
 	init_pair(3, COLOR_BLACK,   COLOR_BLUE);
 	init_pair(4, COLOR_BLACK,   COLOR_RED);
-	init_pair(5, COLOR_MAGENTA, COLOR_MAGENTA); init_pair(6, COLOR_WHITE,   COLOR_BLUE); bkgd(COLOR_PAIR(1));
+	init_pair(5, COLOR_MAGENTA, COLOR_MAGENTA);
+	init_pair(6, COLOR_WHITE,   COLOR_BLUE);
+	bkgd(COLOR_PAIR(1));
 	clear();
 	msgbox = create_object(LINES/4,
 			((COLS-BORD_WIDTH)/8*7+1)%2 ? (COLS-BORD_WIDTH)/8*7 : (COLS-BORD_WIDTH)/8*7+1,
@@ -93,19 +95,37 @@ int how_many_lines (unsigned char *message)
 	return lines;
 }
 
+int draw_msgs (unsigned char *msg, int offs)
+{
+	int tab = -1, it = 0;
+
+	for (tab = 0; tab < strlen(msg); ++tab) {
+		if (msg[tab] == '\t')
+			break;
+	}
+	wmove(my_msgs.win, 0, 0);
+	if (tab != -1) {
+		for (it = tab; it != 0 && msg[it - 1] != '\n'; --it);
+		for (int i = it; msg[i] != '\t'; ++i)
+			waddch(my_msgs.win, msg[i] | COLOR_PAIR(6) | A_BOLD);
+		waddch(my_msgs.win, '\n' | COLOR_PAIR(5));
+		return tab + 2;
+	} else return -1;
+}
+
 int show_messages (void)
 {
-	int history_size = 0, it;
+	int history_size = 0, it, it_r;
 	unsigned char bw = (COLS/8)%2 ? COLS/8-1 : COLS/8;
-	unsigned char msg[21000] = { '\0' };
+	unsigned char msg[10000] = { '\0' };
 
 	system("touch history.txt");
 	history = fopen("history.txt", "r");
 	fgetc(history);
 	fseek(history, 0, SEEK_END);
 	history_size = ftell(history);
-	if (history_size > 21000)
-		fseek(history, history_size - 21000, SEEK_SET);
+	if (history_size > 10000)
+		fseek(history, history_size - 10000, SEEK_SET);
 	else
 		fseek(history, 0, SEEK_SET);
 	it = 0;
@@ -114,11 +134,29 @@ int show_messages (void)
 		++it;
 	}
 	fclose(history);
-	msg[it] = EOF;
+	msg[it] = '\0';
 
-	FILE *d = fopen("debug.log", "a");
-	fprintf(d, "%i", how_many_lines(msg));
-	fclose(d);
+	if (how_many_lines(msg) <= my_msgs.h)
+		it = draw_msgs(msg, 0);
+	else
+		it = draw_msgs(msg, my_msgs.h - how_many_lines(msg));
+
+	for (it = it; it < strlen(msg); ++it) {
+		if (msg[it] != '\t')
+			waddch(my_msgs.win, msg[it] | COLOR_PAIR(3));
+		else {
+			it_r = it + 1;
+			while (msg[it - 1] != '\n') {
+				--it;
+				getyx(my_msgs.win, curY, curX);
+				wmove(my_msgs.win, curY, curX - 1);
+			}
+			for (int i = it; msg[i] != '\t'; ++i)
+				waddch(my_msgs.win, msg[i] | COLOR_PAIR(6) | A_BOLD);
+			waddch(my_msgs.win, '\n' | COLOR_PAIR(5));
+			it = it_r;
+		}
+	}
 
 	wrefresh(my_msgs.win);
 	alarm_b = create_object((bw/2)%2 ? bw/2 : bw/2-1, bw, 0, COLS-bw,
