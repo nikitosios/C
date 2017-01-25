@@ -154,7 +154,7 @@ int draw_msgs (unsigned char *msg, int offs)
 			for (int i = it; msg[i] != '\t'; ++i)
 				waddch(his_msgs.win, msg[i] | COLOR_PAIR(2) | A_BOLD);
 			waddch(his_msgs.win, '\n' | COLOR_PAIR(5));
-			for (it = it; it < strlen(msg); ++it) {
+			for (it = it_r; it < strlen(msg); ++it) {
 				if (msg[it] != '\t')
 					waddch(his_msgs.win, msg[it] | COLOR_PAIR(3));
 				else {
