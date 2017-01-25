@@ -1,5 +1,6 @@
 #ifndef HEADER_H
 #define HEADER_H
+
 #include <ncurses.h>
 #include <stdlib.h>
 #include <locale.h>
@@ -51,4 +52,6 @@ extern unsigned char *my_msgEP;
 extern int msgoffset;
 extern int curY, curX;
 extern FILE *history;
+extern unsigned char my_nickname[41];
+
 #endif

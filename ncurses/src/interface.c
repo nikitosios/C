@@ -95,20 +95,47 @@ int how_many_lines (unsigned char *message)
 	return lines;
 }
 
+int onestr (char *str1, char *str2)
+{
+	for (int i = 0; i < strlen(str1) && i < strlen(str2); ++i)
+		if (str1[i] != str2[i])
+			return 0;
+	return 1;
+}
+
 int draw_msgs (unsigned char *msg, int offs)
 {
 	int tab = -1, it = 0;
+	unsigned char nick[41];
 
 	for (tab = 0; tab < strlen(msg); ++tab) {
 		if (msg[tab] == '\t')
 			break;
 	}
+
 	wmove(my_msgs.win, 0, 0);
+	wmove(his_msgs.win, 0, 0);
+
 	if (tab != -1) {
 		for (it = tab; it != 0 && msg[it - 1] != '\n'; --it);
-		for (int i = it; msg[i] != '\t'; ++i)
-			waddch(my_msgs.win, msg[i] | COLOR_PAIR(6) | A_BOLD);
-		waddch(my_msgs.win, '\n' | COLOR_PAIR(5));
+		for (it = it; msg[it] != '\t'; ++it)
+			nick[it] = msg[it];
+		nick[it] = '\0';
+		attron(COLOR_PAIR(2));
+
+		for (it = tab; it != 0 && msg[it - 1] != '\n'; --it);
+		if (onestr(nick, my_nickname)) {
+			for (int i = it; i < strlen(msg); ++i)
+				waddch(my_msgs.win, msg[i] | COLOR_PAIR(6) | A_BOLD);
+			waddch(my_msgs.win, '\n' | COLOR_PAIR(5));
+			wrefresh(my_msgs.win);
+		} else {
+			for (int i = it; i < strlen(msg); ++i)
+				waddch(his_msgs.win, msg[i] | COLOR_PAIR(2) | A_BOLD);
+			waddch(his_msgs.win, '\n' | COLOR_PAIR(5));
+			wrefresh(his_msgs.win);
+		}
+		msleep(2000);
 		return tab + 2;
 	} else return -1;
 }
@@ -138,8 +165,6 @@ int show_messages (void)
 
 	if (how_many_lines(msg) <= my_msgs.h)
 		it = draw_msgs(msg, 0);
-	else
-		it = draw_msgs(msg, my_msgs.h - how_many_lines(msg));
 
 	for (it = it; it < strlen(msg); ++it) {
 		if (msg[it] != '\t')
