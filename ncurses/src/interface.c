@@ -97,7 +97,9 @@ int how_many_lines (unsigned char *message)
 
 int onestr (char *str1, char *str2)
 {
-	for (int i = 0; i < strlen(str1) && i < strlen(str2); ++i)
+	if (strlen(str1) != strlen(str2))
+		return 0;
+	for (int i = 0; i < strlen(str2); ++i)
 		if (str1[i] != str2[i])
 			return 0;
 	return 1;
@@ -105,52 +107,91 @@ int onestr (char *str1, char *str2)
 
 int draw_msgs (unsigned char *msg, int offs)
 {
-	int tab = -1, it = 0;
+	int tab = -1, it = 0, it_r;
 	unsigned char nick[41];
 
-	for (tab = 0; tab < strlen(msg); ++tab) {
+	for (it = 0; offs; ++it)
+		if (msg[it] == '\n') --offs;
+
+	for (tab = it; tab < strlen(msg); ++tab) {
 		if (msg[tab] == '\t')
 			break;
 	}
-
-	wmove(my_msgs.win, 0, 0);
-	wmove(his_msgs.win, 0, 0);
 
 	if (tab != -1) {
 		for (it = tab; it != 0 && msg[it - 1] != '\n'; --it);
 		for (it = it; msg[it] != '\t'; ++it)
 			nick[it] = msg[it];
-		nick[it] = '\0';
-		attron(COLOR_PAIR(2));
+		nick[it - 1] = '\0';
 
-		for (it = tab; it != 0 && msg[it - 1] != '\n'; --it);
+		it = tab + 2;
 		if (onestr(nick, my_nickname)) {
-			for (int i = it; i < strlen(msg); ++i)
+			it_r = it;
+			for (it = tab; it != 0 && msg[it - 1] != '\n'; --it);
+			for (int i = it; msg[i] != '\t'; ++i)
 				waddch(my_msgs.win, msg[i] | COLOR_PAIR(6) | A_BOLD);
 			waddch(my_msgs.win, '\n' | COLOR_PAIR(5));
+			for (it = it_r; it < strlen(msg); ++it) {
+				if (msg[it] != '\t')
+					waddch(my_msgs.win, msg[it] | COLOR_PAIR(3));
+				else {
+					it_r = it + 1;
+					while (msg[it - 1] != '\n') {
+						--it;
+						getyx(my_msgs.win, curY, curX);
+						wmove(my_msgs.win, curY, curX - 1);
+					}
+					for (int i = it; msg[i] != '\t'; ++i)
+						waddch(my_msgs.win, msg[i] | COLOR_PAIR(6) | A_BOLD);
+					waddch(my_msgs.win, '\n' | COLOR_PAIR(5));
+					it = it_r;
+				}
+			}
 			wrefresh(my_msgs.win);
 		} else {
-			for (int i = it; i < strlen(msg); ++i)
+			it_r = it;
+			for (it = tab; it != 0 && msg[it - 1] != '\n'; --it);
+			for (int i = it; msg[i] != '\t'; ++i)
 				waddch(his_msgs.win, msg[i] | COLOR_PAIR(2) | A_BOLD);
 			waddch(his_msgs.win, '\n' | COLOR_PAIR(5));
+			for (it = it; it < strlen(msg); ++it) {
+				if (msg[it] != '\t')
+					waddch(his_msgs.win, msg[it] | COLOR_PAIR(3));
+				else {
+					it_r = it + 1;
+					while (msg[it - 1] != '\n') {
+						--it;
+						getyx(his_msgs.win, curY, curX);
+						wmove(his_msgs.win, curY, curX - 1);
+					}
+					for (int i = it; msg[i] != '\t'; ++i)
+						waddch(his_msgs.win, msg[i] | COLOR_PAIR(6) | A_BOLD);
+					waddch(his_msgs.win, '\n' | COLOR_PAIR(5));
+					it = it_r;
+				}
+			}
 			wrefresh(his_msgs.win);
 		}
-		msleep(2000);
+
+
 		return tab + 2;
 	} else return -1;
 }
 
 int show_messages (void)
 {
-	int history_size = 0, it, it_r;
+	int history_size = 0, it;
 	unsigned char bw = (COLS/8)%2 ? COLS/8-1 : COLS/8;
 	unsigned char msg[10000] = { '\0' };
 
 	system("touch history.txt");
 	history = fopen("history.txt", "r");
-	fgetc(history);
 	fseek(history, 0, SEEK_END);
 	history_size = ftell(history);
+	if (!history_size) {
+		fclose(history);
+		return 0;
+	}
 	if (history_size > 10000)
 		fseek(history, history_size - 10000, SEEK_SET);
 	else
@@ -163,25 +204,12 @@ int show_messages (void)
 	fclose(history);
 	msg[it] = '\0';
 
-	if (how_many_lines(msg) <= my_msgs.h)
+	it = how_many_lines(msg);
+	if (it <= my_msgs.h)
 		it = draw_msgs(msg, 0);
+	else
+		it = draw_msgs(msg, it - my_msgs.h);
 
-	for (it = it; it < strlen(msg); ++it) {
-		if (msg[it] != '\t')
-			waddch(my_msgs.win, msg[it] | COLOR_PAIR(3));
-		else {
-			it_r = it + 1;
-			while (msg[it - 1] != '\n') {
-				--it;
-				getyx(my_msgs.win, curY, curX);
-				wmove(my_msgs.win, curY, curX - 1);
-			}
-			for (int i = it; msg[i] != '\t'; ++i)
-				waddch(my_msgs.win, msg[i] | COLOR_PAIR(6) | A_BOLD);
-			waddch(my_msgs.win, '\n' | COLOR_PAIR(5));
-			it = it_r;
-		}
-	}
 
 	wrefresh(my_msgs.win);
 	alarm_b = create_object((bw/2)%2 ? bw/2 : bw/2-1, bw, 0, COLS-bw,
