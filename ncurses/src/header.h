@@ -53,5 +53,6 @@ extern int msgoffset;
 extern int curY, curX;
 extern FILE *history;
 extern unsigned char my_nickname[41];
+extern int msgsoffs;
 
 #endif

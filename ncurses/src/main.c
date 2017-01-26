@@ -21,6 +21,7 @@ int msgoffset;
 int curY, curX;
 FILE *history;
 unsigned char my_nickname[41] = "nikitosios";
+int msgsoffs;
 
 int parse_mouse (MEVENT event, struct object button);
 
@@ -31,6 +32,7 @@ int main (void)
 
 	/* Initialize curses */
 	msgoffset = 0;
+	msgsoffs = 0;
 	my_msgEP = my_msgP = my_msg;
 	msgoffset = 0;
 	alarming = true;

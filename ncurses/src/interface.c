@@ -8,7 +8,7 @@ int update_screen (void)
 
 	init_pair(1, COLOR_BLACK,   COLOR_MAGENTA);
 	init_pair(2, COLOR_BLACK,   COLOR_WHITE);
-	init_pair(3, COLOR_BLACK,   COLOR_BLUE);
+	init_pair(3, COLOR_WHITE,   COLOR_BLUE);
 	init_pair(4, COLOR_BLACK,   COLOR_RED);
 	init_pair(5, COLOR_MAGENTA, COLOR_MAGENTA);
 	init_pair(6, COLOR_WHITE,   COLOR_BLUE);
@@ -26,8 +26,8 @@ int update_screen (void)
 	mvaddch(filesend.cy, filesend.cx, '#' | COLOR_PAIR(3));
 	my_msgs = create_object(LINES-msgbox.h, COLS/2+1, 0, COLS/2, COLOR_PAIR(1), false);
 	his_msgs = create_object(LINES-msgbox.h, COLS/2+1, 0, 0, COLOR_PAIR(1), false);
-	my_msgs.win = newwin(my_msgs.h - 2, my_msgs.w - 2, my_msgs.y + 1, my_msgs.x + 1);
-	his_msgs.win = newwin(his_msgs.h - 2, his_msgs.w - 2, his_msgs.y + 1, his_msgs.x + 1);
+	my_msgs.win = newwin(my_msgs.h - 2, my_msgs.w - 1 - alarm_b.w, my_msgs.y + 1, my_msgs.x + 1);
+	his_msgs.win = newwin(his_msgs.h - 2, his_msgs.w - 2 - alarm_b.w, his_msgs.y + 1, his_msgs.x + 1);
 	wbkgd(my_msgs.win, COLOR_PAIR(1));
 	wbkgd(his_msgs.win, COLOR_PAIR(1));
 	for (int yi = his_msgs.y + 1; yi < his_msgs.ey; yi++)
@@ -88,9 +88,15 @@ int how_many_lines (unsigned char *message)
 	int i = 0;
 
 	while (message[i] != '\0') {
-		if (message[i] == '\n')
+		if (message[i] == '\n') {
 			++lines;
+			i = 0;
+		}
 		++i;
+		if (i >= my_msgs.w || i >= his_msgs.w) {
+			++lines;
+			i = 0;
+		}
 	}
 	return lines;
 }
@@ -105,13 +111,11 @@ int onestr (char *str1, char *str2)
 	return 1;
 }
 
-int draw_msgs (unsigned char *msg, int offs)
+int draw_msgs (unsigned char *msg)
 {
 	int tab = -1, it = 0, it_r;
 	unsigned char nick[41];
-
-	for (it = 0; offs; ++it)
-		if (msg[it] == '\n') --offs;
+	int curY2, offs = msgsoffs;
 
 	for (tab = it; tab < strlen(msg); ++tab) {
 		if (msg[tab] == '\t')
@@ -128,6 +132,9 @@ int draw_msgs (unsigned char *msg, int offs)
 		if (onestr(nick, my_nickname)) {
 			it_r = it;
 			for (it = tab; it != 0 && msg[it - 1] != '\n'; --it);
+			getyx(his_msgs.win, curY, curX);
+			getyx(my_msgs.win, curY2, curX);
+			wmove(my_msgs.win, curY > curY2 ? curY : curY2, 0);
 			for (int i = it; msg[i] != '\t'; ++i)
 				waddch(my_msgs.win, msg[i] | COLOR_PAIR(6) | A_BOLD);
 			waddch(my_msgs.win, '\n' | COLOR_PAIR(5));
@@ -139,35 +146,36 @@ int draw_msgs (unsigned char *msg, int offs)
 					while (msg[it - 1] != '\n') {
 						--it;
 						getyx(my_msgs.win, curY, curX);
+						mvwaddch(my_msgs.win, curY, curX - 1, ' ' | COLOR_PAIR(5));
 						wmove(my_msgs.win, curY, curX - 1);
 					}
-					for (int i = it; msg[i] != '\t'; ++i)
-						waddch(my_msgs.win, msg[i] | COLOR_PAIR(6) | A_BOLD);
-					waddch(my_msgs.win, '\n' | COLOR_PAIR(5));
-					it = it_r;
+					draw_msgs(msg + it);
+					break;
 				}
 			}
 			wrefresh(my_msgs.win);
 		} else {
 			it_r = it;
 			for (it = tab; it != 0 && msg[it - 1] != '\n'; --it);
+			getyx(my_msgs.win, curY, curX);
+			getyx(his_msgs.win, curY2, curX);
+			wmove(his_msgs.win, curY > curY2 ? curY : curY2, 0);
 			for (int i = it; msg[i] != '\t'; ++i)
 				waddch(his_msgs.win, msg[i] | COLOR_PAIR(2) | A_BOLD);
 			waddch(his_msgs.win, '\n' | COLOR_PAIR(5));
 			for (it = it_r; it < strlen(msg); ++it) {
 				if (msg[it] != '\t')
-					waddch(his_msgs.win, msg[it] | COLOR_PAIR(3));
+					waddch(his_msgs.win, msg[it] | COLOR_PAIR(2));
 				else {
 					it_r = it + 1;
 					while (msg[it - 1] != '\n') {
 						--it;
 						getyx(his_msgs.win, curY, curX);
+						mvwaddch(his_msgs.win, curY, curX - 1, ' ' | COLOR_PAIR(5));
 						wmove(his_msgs.win, curY, curX - 1);
 					}
-					for (int i = it; msg[i] != '\t'; ++i)
-						waddch(his_msgs.win, msg[i] | COLOR_PAIR(6) | A_BOLD);
-					waddch(his_msgs.win, '\n' | COLOR_PAIR(5));
-					it = it_r;
+					draw_msgs(msg + it);
+					break;
 				}
 			}
 			wrefresh(his_msgs.win);
@@ -204,12 +212,7 @@ int show_messages (void)
 	fclose(history);
 	msg[it] = '\0';
 
-	it = how_many_lines(msg);
-	if (it <= my_msgs.h)
-		it = draw_msgs(msg, 0);
-	else
-		it = draw_msgs(msg, it - my_msgs.h);
-
+	draw_msgs(msg);
 
 	wrefresh(my_msgs.win);
 	alarm_b = create_object((bw/2)%2 ? bw/2 : bw/2-1, bw, 0, COLS-bw,
