@@ -1,11 +1,6 @@
 #include <ncurses.h>
 #include "header.h"
 
-#define GO_UP 1
-#define GO_DOWN 2
-#define GO_LEFT 3
-#define GO_RIGHT 4
-
 struct object msgsend;
 struct object msgbox;
 struct object filesend;
