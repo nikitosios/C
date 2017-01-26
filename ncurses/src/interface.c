@@ -4,16 +4,19 @@
 
 int update_screen (void)
 {
-	unsigned char bw = (COLS/8)%2 ? COLS/8-1 : COLS/8;
+	const unsigned char bw = (COLS/8)%2 ? COLS/8-1 : COLS/8;
 
+	/* initialize color pairs */
 	init_pair(1, COLOR_BLACK,   COLOR_MAGENTA);
 	init_pair(2, COLOR_BLACK,   COLOR_WHITE);
 	init_pair(3, COLOR_WHITE,   COLOR_BLUE);
 	init_pair(4, COLOR_BLACK,   COLOR_RED);
 	init_pair(5, COLOR_MAGENTA, COLOR_MAGENTA);
 	init_pair(6, COLOR_WHITE,   COLOR_BLUE);
+	/* set background of main ncurses window */
 	bkgd(COLOR_PAIR(1));
 	clear();
+	/* create and draw all UI objects */
 	msgbox = create_object(LINES/4,
 			((COLS-BORD_WIDTH)/8*7+1)%2 ? (COLS-BORD_WIDTH)/8*7 : (COLS-BORD_WIDTH)/8*7+1,
 			LINES - LINES/4, BORD_WIDTH, COLOR_PAIR(2), true);
@@ -44,6 +47,7 @@ int update_screen (void)
 	return 0;
 }
 
+/* constructor for UI objects */
 struct object create_object (int h, int w, int y, int x, unsigned int flags, bool form)
 {
 	struct object obj;
@@ -63,6 +67,7 @@ struct object create_object (int h, int w, int y, int x, unsigned int flags, boo
 	return obj;
 }
 
+/* constructor for windows */
 WINDOW *create_newwin (int h, int w, int y, int x, unsigned int cp)
 {
 	WINDOW *win;
@@ -74,14 +79,7 @@ WINDOW *create_newwin (int h, int w, int y, int x, unsigned int cp)
 	return win;
 }
 
-void destroy_win (WINDOW *win, unsigned int cp)
-{
-	wborder(win, ' ' | cp, ' ' | cp, ' ' | cp, ' ' | cp, ' ' | cp, ' ' | cp, ' ' | cp, ' ' | cp);
-	wrefresh(win);
-	delwin(win);
-	return;
-}
-
+/* how many lines in given message */
 int how_many_lines (unsigned char *message)
 {
 	int lines = 0;
@@ -101,6 +99,7 @@ int how_many_lines (unsigned char *message)
 	return lines;
 }
 
+/* compare strings */
 int onestr (char *str1, char *str2)
 {
 	if (strlen(str1) != strlen(str2))
@@ -111,33 +110,40 @@ int onestr (char *str1, char *str2)
 	return 1;
 }
 
+/* draw all messages */
 int draw_msgs (unsigned char *msg)
 {
 	int tab = -1, it = 0, it_r;
 	unsigned char nick[41];
 	int curY2, offs = msgsoffs;
 
+	/* find first tabulation symbol in array */
 	for (tab = it; tab < strlen(msg); ++tab) {
 		if (msg[tab] == '\t')
 			break;
 	}
 
 	if (tab != -1) {
+		/* read nickname */
 		for (it = tab; it != 0 && msg[it - 1] != '\n'; --it);
 		for (it = it; msg[it] != '\t'; ++it)
 			nick[it] = msg[it];
 		nick[it - 1] = '\0';
 
+		/* if it is your message then draw it to right msessages window */
 		it = tab + 2;
 		if (onestr(nick, my_nickname)) {
+			/* get last line of previous message to draw current message lower */
 			it_r = it;
 			for (it = tab; it != 0 && msg[it - 1] != '\n'; --it);
 			getyx(his_msgs.win, curY, curX);
 			getyx(my_msgs.win, curY2, curX);
 			wmove(my_msgs.win, curY > curY2 ? curY : curY2, 0);
+			/* draw nickname */
 			for (int i = it; msg[i] != '\t'; ++i)
 				waddch(my_msgs.win, msg[i] | COLOR_PAIR(6) | A_BOLD);
 			waddch(my_msgs.win, '\n' | COLOR_PAIR(5));
+			/* draw current message and handle all next messages using this function (recursively) */
 			for (it = it_r; it < strlen(msg); ++it) {
 				if (msg[it] != '\t')
 					waddch(my_msgs.win, msg[it] | COLOR_PAIR(3));
@@ -153,7 +159,9 @@ int draw_msgs (unsigned char *msg)
 					break;
 				}
 			}
+			/* refresh window */
 			wrefresh(my_msgs.win);
+		/* else to left */
 		} else {
 			it_r = it;
 			for (it = tab; it != 0 && msg[it - 1] != '\n'; --it);
@@ -192,6 +200,7 @@ int show_messages (void)
 	unsigned char bw = (COLS/8)%2 ? COLS/8-1 : COLS/8;
 	unsigned char msg[10000] = { '\0' };
 
+	/* read last 10000 symbols from history file to memory */
 	system("touch history.txt");
 	history = fopen("history.txt", "r");
 	fseek(history, 0, SEEK_END);
@@ -212,9 +221,10 @@ int show_messages (void)
 	fclose(history);
 	msg[it] = '\0';
 
+	/* draw messages from memory */
 	draw_msgs(msg);
 
-	wrefresh(my_msgs.win);
+	/* draw alarm button again */
 	alarm_b = create_object((bw/2)%2 ? bw/2 : bw/2-1, bw, 0, COLS-bw,
 			alarming ? COLOR_PAIR(2) : COLOR_PAIR(4), false);
 	attron(alarming ? COLOR_PAIR(2) : COLOR_PAIR(4));
@@ -253,6 +263,7 @@ struct xy msgmove (void)
 	return st;
 }
 
+/* draw all required elements to textbox for messages */
 int update_msgbox (void)
 {
 	unsigned char *it;
