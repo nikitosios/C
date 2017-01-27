@@ -83,18 +83,14 @@ WINDOW *create_newwin (int h, int w, int y, int x, unsigned int cp)
 int how_many_lines (unsigned char *message)
 {
 	int lines = 0;
-	int i = 0;
+	int sym = 0;
 
-	while (message[i] != '\0') {
-		if (message[i] == '\n') {
+	for (int i = 0; i < strlen(message); ++i) {
+		if (message[i] == '\n' || sym >= my_msgs.w) {
 			++lines;
-			i = 0;
+			sym = 0;
 		}
-		++i;
-		if (i >= my_msgs.w || i >= his_msgs.w) {
-			++lines;
-			i = 0;
-		}
+		++sym;
 	}
 	return lines;
 }
@@ -115,7 +111,7 @@ int draw_msgs (unsigned char *msg)
 {
 	int tab = -1, it = 0, it_r;
 	unsigned char nick[41];
-	int curY2, offs = msgsoffs;
+	int curY2;
 
 	/* find first tabulation symbol in array */
 	for (tab = it; tab < strlen(msg); ++tab) {
@@ -196,7 +192,7 @@ int draw_msgs (unsigned char *msg)
 
 int show_messages (void)
 {
-	int history_size = 0, it;
+	int history_size = 0, it, f = 0;
 	unsigned char bw = (COLS/8)%2 ? COLS/8-1 : COLS/8;
 	unsigned char msg[10000] = { '\0' };
 
@@ -221,8 +217,46 @@ int show_messages (void)
 	fclose(history);
 	msg[it] = '\0';
 
+	/* handle offset */
+	unsigned char *msgP = msg;
+	int lines = how_many_lines(msg);
+	if (lines > my_msgs.h) {
+		for (int i = 0; i < strlen(msg); ++i) {
+		}
+	}
+	f = 0;
+	for (int i = 0; i < msgsoffs; ++i)
+		if (msg[i] == '\n') {
+			++i;
+			msgP = msg + i;
+		}
+
+	for (it = msgP - msg; msg[it] != '\t'; ++it)
+		if (msg[it] == '\n')
+			f = 1;
+	if (f) {
+		for (it = msgP - msg; msg[it] != '\t'; --it);
+		for (--it; it > 0 && msg[it - 1] != '\n'; --it);
+		unsigned char nick[41];
+		int iter = 0;
+		for (+it; msg[it + 1] != '\t'; ++it) {
+			nick[iter] = msg[it];
+			++iter;
+		}
+		if (onestr(nick, my_nickname)) {
+			for (msgP; *msgP != '\t'; ++msgP)
+				waddch(my_msgs.win, *msgP | COLOR_PAIR(6));
+			waddch(my_msgs.win, '\n' | COLOR_PAIR(5));
+		} else {
+			for (msgP; *msgP != '\t'; ++msgP)
+				waddch(his_msgs.win, *msgP | COLOR_PAIR(3));
+			waddch(his_msgs.win, '\n' | COLOR_PAIR(5));
+		}
+		msgP += 2;
+	}
+
 	/* draw messages from memory */
-	draw_msgs(msg);
+	draw_msgs(msgP);
 
 	/* draw alarm button again */
 	alarm_b = create_object((bw/2)%2 ? bw/2 : bw/2-1, bw, 0, COLS-bw,
