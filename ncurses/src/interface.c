@@ -221,16 +221,17 @@ int show_messages (void)
 	unsigned char *msgP = msg;
 	int lines = how_many_lines(msg);
 	if (lines > my_msgs.h) {
-		for (int i = 0; i < strlen(msg); ++i) {
+		for (int i = 0; lines > my_msgs.h; ++i) {
+			if (msg[i] == '\n') {
+				msgP = msg + i + 1;
+				--lines;
+			}
 		}
+	} else {
+		wmove(my_msgs.win, my_msgs.h - lines - 2, 0);
+		wmove(his_msgs.win, his_msgs.h - lines - 2, 0);
 	}
 	f = 0;
-	for (int i = 0; i < msgsoffs; ++i)
-		if (msg[i] == '\n') {
-			++i;
-			msgP = msg + i;
-		}
-
 	for (it = msgP - msg; msg[it] != '\t'; ++it)
 		if (msg[it] == '\n')
 			f = 1;
@@ -243,6 +244,7 @@ int show_messages (void)
 			nick[iter] = msg[it];
 			++iter;
 		}
+		nick[iter] = '\0';
 		if (onestr(nick, my_nickname)) {
 			for (msgP; *msgP != '\t'; ++msgP)
 				waddch(my_msgs.win, *msgP | COLOR_PAIR(6));
