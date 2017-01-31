@@ -219,7 +219,7 @@ int show_messages (void)
 
 	/* handle offset */
 	unsigned char *msgP = msg;
-	int lines = how_many_lines(msg);
+	int lines = how_many_lines(msg) + 2;
 	if (lines > my_msgs.h) {
 		for (int i = 0; lines > my_msgs.h; ++i) {
 			if (msg[i] == '\n') {
@@ -231,10 +231,16 @@ int show_messages (void)
 		wmove(my_msgs.win, my_msgs.h - lines - 2, 0);
 		wmove(his_msgs.win, his_msgs.h - lines - 2, 0);
 	}
+
 	f = 0;
 	for (it = msgP - msg; msg[it] != '\t'; ++it)
-		if (msg[it] == '\n')
+	{
+		if (msg[it] == '\n') {
 			f = 1;
+			break;
+		}
+	}
+
 	if (f) {
 		for (it = msgP - msg; msg[it] != '\t'; --it);
 		for (--it; it > 0 && msg[it - 1] != '\n'; --it);
@@ -248,13 +254,22 @@ int show_messages (void)
 		if (onestr(nick, my_nickname)) {
 			for (msgP; *msgP != '\t'; ++msgP)
 				waddch(my_msgs.win, *msgP | COLOR_PAIR(6));
-			waddch(my_msgs.win, '\n' | COLOR_PAIR(5));
+			for (msgP; *msgP != '\n'; --msgP)
+			{
+				getyx(my_msgs.win, curY, curX);
+				mvwaddch(my_msgs.win, curY, curX - 1, ' ' | COLOR_PAIR(5));
+				wmove(my_msgs.win, curY, curX - 1);
+			}
 		} else {
 			for (msgP; *msgP != '\t'; ++msgP)
-				waddch(his_msgs.win, *msgP | COLOR_PAIR(3));
-			waddch(his_msgs.win, '\n' | COLOR_PAIR(5));
+				waddch(his_msgs.win, *msgP | COLOR_PAIR(2));
+			for (msgP; *msgP != '\n'; --msgP)
+			{
+				getyx(his_msgs.win, curY, curX);
+				mvwaddch(his_msgs.win, curY, curX - 1, ' ' | COLOR_PAIR(5));
+				wmove(his_msgs.win, curY, curX - 1);
+			}
 		}
-		msgP += 2;
 	}
 
 	/* draw messages from memory */
