@@ -82,16 +82,19 @@ WINDOW *create_newwin (int h, int w, int y, int x, unsigned int cp)
 /* how many lines in given message */
 int how_many_lines (unsigned char *message)
 {
-	int lines = 0;
-	int sym = 0;
+	int lines = 1;
+	int sym = 1;
 
-	for (int i = 0; i < strlen(message); ++i) {
-		if (message[i] == '\n' || sym >= my_msgs.w) {
+	for (int i = 0; i < strlen(message) - 1; ++i)
+	{
+		if (message[i] == '\n' || sym > my_msgs.w)
+		{
 			++lines;
-			sym = 0;
+			sym = 1;
 		}
 		++sym;
 	}
+
 	return lines;
 }
 
@@ -139,11 +142,15 @@ int draw_msgs (unsigned char *msg)
 			for (int i = it; msg[i] != '\t'; ++i)
 				waddch(my_msgs.win, msg[i] | COLOR_PAIR(6) | A_BOLD);
 			waddch(my_msgs.win, '\n' | COLOR_PAIR(5));
-			/* draw current message and handle all next messages using this function (recursively) */
+			/* draw current message and handle all next messages
+			 * using this function (recursively) */
 			for (it = it_r; it < strlen(msg); ++it) {
 				if (msg[it] != '\t')
+				{
+					getyx(my_msgs.win, curY, curX);
+					if (curX >= my_msgs.w) wmove(my_msgs.win, curY + 1, 0);
 					waddch(my_msgs.win, msg[it] | COLOR_PAIR(3));
-				else {
+				} else {
 					it_r = it + 1;
 					while (msg[it - 1] != '\n') {
 						--it;
@@ -157,7 +164,7 @@ int draw_msgs (unsigned char *msg)
 			}
 			/* refresh window */
 			wrefresh(my_msgs.win);
-		/* else to left */
+			/* else to left */
 		} else {
 			it_r = it;
 			for (it = tab; it != 0 && msg[it - 1] != '\n'; --it);
@@ -169,8 +176,11 @@ int draw_msgs (unsigned char *msg)
 			waddch(his_msgs.win, '\n' | COLOR_PAIR(5));
 			for (it = it_r; it < strlen(msg); ++it) {
 				if (msg[it] != '\t')
+				{
+					getyx(my_msgs.win, curY, curX);
+					if (curX >= my_msgs.w) wmove(my_msgs.win, curY + 1, 0);
 					waddch(his_msgs.win, msg[it] | COLOR_PAIR(2));
-				else {
+				} else {
 					it_r = it + 1;
 					while (msg[it - 1] != '\n') {
 						--it;
@@ -194,7 +204,10 @@ int show_messages (void)
 {
 	int history_size = 0, it, f = 0;
 	unsigned char bw = (COLS/8)%2 ? COLS/8-1 : COLS/8;
-	unsigned char msg[10000] = { '\0' };
+	unsigned char msg[10000] = {};
+	unsigned char nick[41];
+	int iter, lines;
+	unsigned char *msgP;
 
 	/* read last 10000 symbols from history file to memory */
 	system("touch history.txt");
@@ -218,19 +231,16 @@ int show_messages (void)
 	msg[it] = '\0';
 
 	/* handle offset */
-	unsigned char *msgP = msg;
-	int lines = how_many_lines(msg) + 2;
-	if (lines > my_msgs.h) {
-		for (int i = 0; lines > my_msgs.h; ++i) {
-			if (msg[i] == '\n') {
-				msgP = msg + i + 1;
-				--lines;
-			}
+	msgP = msg;
+	lines = how_many_lines(msg);
+	for (int i = 0; lines > my_msgs.h; ++i) {
+		if (msg[i] == '\n') {
+			msgP = msg + i + 1;
+			--lines;
 		}
-	} else {
-		wmove(my_msgs.win, my_msgs.h - lines - 2, 0);
-		wmove(his_msgs.win, his_msgs.h - lines - 2, 0);
 	}
+	wmove(my_msgs.win, my_msgs.h - lines, 0);
+	wmove(his_msgs.win, his_msgs.h - lines, 0);
 
 	f = 0;
 	for (it = msgP - msg; msg[it] != '\t'; ++it)
@@ -244,16 +254,20 @@ int show_messages (void)
 	if (f) {
 		for (it = msgP - msg; msg[it] != '\t'; --it);
 		for (--it; it > 0 && msg[it - 1] != '\n'; --it);
-		unsigned char nick[41];
-		int iter = 0;
+		iter = 0;
 		for (+it; msg[it + 1] != '\t'; ++it) {
 			nick[iter] = msg[it];
 			++iter;
 		}
 		nick[iter] = '\0';
+
 		if (onestr(nick, my_nickname)) {
 			for (msgP; *msgP != '\t'; ++msgP)
+			{
+				getyx(my_msgs.win, curY, curX);
+				if (curX >= my_msgs.w) wmove(my_msgs.win, curY + 1, 0);
 				waddch(my_msgs.win, *msgP | COLOR_PAIR(6));
+			}
 			for (msgP; *msgP != '\n'; --msgP)
 			{
 				getyx(my_msgs.win, curY, curX);
@@ -262,7 +276,11 @@ int show_messages (void)
 			}
 		} else {
 			for (msgP; *msgP != '\t'; ++msgP)
+			{
+				getyx(his_msgs.win, curY, curX);
+				if (curX >= his_msgs.w) wmove(his_msgs.win, curY + 1, 0);
 				waddch(his_msgs.win, *msgP | COLOR_PAIR(2));
+			}
 			for (msgP; *msgP != '\n'; --msgP)
 			{
 				getyx(his_msgs.win, curY, curX);
@@ -270,6 +288,7 @@ int show_messages (void)
 				wmove(his_msgs.win, curY, curX - 1);
 			}
 		}
+		++msgP;
 	}
 
 	/* draw messages from memory */
