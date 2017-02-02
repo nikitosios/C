@@ -1,42 +1,6 @@
-#include <stdio.h> //printf
-#include <string.h> //strlen
-#include <sys/socket.h> //socket
-#include <arpa/inet.h> //inet_addr
-#include <pthread.h> //multithread
-#include <stdlib.h>
+#include "api.h"
 
-const char stdport[] = "31185";
-
-void *output_packages (void *parameters)
-{
-	int sockt = *(int *) parameters;
-	char message[2000];
-
-	while (1) {
-		printf("Вы:\n");
-		for (int o = 0; o < sizeof(message); o++)
-			if ((message[o] = getchar()) == EOF)
-				break;
-	
-		//Send some data
-		if(send(sockt, message, sizeof(message), 0) < 0)
-		{
-			puts("Send failed");
-			exit(1);
-		}
-		message[0] = EOF;
-	}
-}
-
-int square (int num, int ex) {
-	int res = 1;
-
-	for (int i = 0; i < ex; i++)
-		res *= num;
-	return res;
-}
-
-int main (int argc, char *argv[])
+int main_client(int argc, char *argv[])
 {
 	int sock;
 	char server_reply[2000];
@@ -44,6 +8,11 @@ int main (int argc, char *argv[])
     char server_ip_port[23], c;
 	char server_ip[17], server_port[6];
 	int server_p = 0;
+
+	if (strcmp(argv[1], "--server"))
+	{
+		printf("server started\n");
+	}
 
 	FILE *readme = fopen("README.txt", "r");
 	fseek(readme, 0, SEEK_END);
@@ -79,7 +48,7 @@ int main (int argc, char *argv[])
 		for (int o = 0; o < sizeof server_port; o++) server_port[o] = stdport[o];
 	unsigned char ex = 0;
 	for (int o = strlen(server_port) - 1; o != -1; o--) {
-		server_p += square(10, ex) * (server_port[o] - 48);
+		server_p += pow(10, ex) * (server_port[o] - 48);
 		ex++;
 	}
 
@@ -129,4 +98,3 @@ int main (int argc, char *argv[])
 	close(sock);
 	return 0;
 }
-
