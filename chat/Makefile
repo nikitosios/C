@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Wall
 LDFLAGS=-pthread -lm
-SOURCES=src/*
+SOURCES=src/*.[ch]
 OBJECTS=build/*.o
 PROJDIR=chat-cli
 EXECUTABLE=chat-cli

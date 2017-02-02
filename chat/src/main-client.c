@@ -11,17 +11,9 @@ int main_client(int argc, char *argv[])
 	char server_ip[17], server_port[6];
 	int server_p = 0;
 
-	FILE *readme = fopen("README.txt", "r");
-	fseek(readme, 0, SEEK_END);
-	int readmeS = ftell(readme);
-	fseek(readme, 0, SEEK_SET);
-	for (int o = 0; o < readmeS; o++)
-		putchar(fgetc(readme));
-	fclose(readme);
-
 	//Read an IP:port of server
 	int i;
-	if (argc == 1) {
+	if (argc == 2) {
 		puts("Введите IP сервера: ");
 		for (i = 0; i < 22; i++) {
 			c = fgetc(stdin);
@@ -31,7 +23,7 @@ int main_client(int argc, char *argv[])
 		}
 		server_ip_port[i] = '\0';
 	} else 
-		for (int o = 0; o <= strlen(argv[1]); o++) server_ip_port[o] = argv[1][o];
+		memcpy(server_ip_port, argv[2], strlen(argv[2]));
 	for (i = 0; server_ip_port[i] != ':' && server_ip_port[i] != '\0'; i++)
 		server_ip[i] = server_ip_port[i];
 	server_ip[i] = '\0';

@@ -3,11 +3,12 @@
 int main_server(int argc, char *argv[])
 {
     int socket_desc, new_socket, c, *new_sock, server_port;
+	int ncon;
 	struct sockaddr_in server, client;
 
-	if (argc == 1)
+	if (argc == 2)
 		server_port = 31185;
-	else server_port = atoi(argv[1]);
+	else server_port = atoi(argv[2]);
 
 	// Create socket
 	socket_desc = socket(AF_INET, SOCK_STREAM, 0);
@@ -20,7 +21,7 @@ int main_server(int argc, char *argv[])
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = INADDR_ANY;
 	server.sin_port = htons(server_port);
-
+	
 	//Bind
 	if (bind(socket_desc, (struct sockaddr *) &server, sizeof(server)) < 0)
 	{
@@ -29,8 +30,11 @@ int main_server(int argc, char *argv[])
 	}
 	puts("bind done");
 
+	puts("How many connections?");
+	scanf("%i", &ncon);
+
 	//Listen
-	listen(socket_desc, 1);
+	listen(socket_desc, ncon);
 
 	//Accept and incoming connection
 	puts("Waiting for incoming connections...");
