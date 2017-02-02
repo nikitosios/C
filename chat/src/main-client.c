@@ -1,5 +1,7 @@
 #include "api.h"
 
+const char *stdport = "31185";
+
 int main_client(int argc, char *argv[])
 {
 	int sock;
@@ -8,11 +10,6 @@ int main_client(int argc, char *argv[])
     char server_ip_port[23], c;
 	char server_ip[17], server_port[6];
 	int server_p = 0;
-
-	if (strcmp(argv[1], "--server"))
-	{
-		printf("server started\n");
-	}
 
 	FILE *readme = fopen("README.txt", "r");
 	fseek(readme, 0, SEEK_END);
