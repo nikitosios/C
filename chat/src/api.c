@@ -34,6 +34,8 @@ static void *input_read (void *socket)
 		write(sockett, message, strlen(message));
 		message[0] = EOF;
 	}
+
+	return NULL;
 }
 
 /* this function will handle connection for each client */
@@ -47,13 +49,9 @@ void *connection_handler (void *socket_desc)
 	char client_message[2000];
 	pthread_t input_packages;
 
-	pthread_create(&input_packages, NULL, input_read, new_sock);
-
 	//Receive a message from client
 	while ((read_size = recv(sock, client_message, 2000, 0)) > 0)
 	{
-		//Send the message back to client
-		printf("---------------------\nКот из Мордора:\n");
 		for (int o = 0; o < sizeof(client_message); o++)
 			if (client_message[o] == EOF)
 				break;
@@ -67,9 +65,7 @@ void *connection_handler (void *socket_desc)
 	{
 		puts("Client disconnected");
 		fflush(stdout);
-	}
-	else if(read_size == -1)
-	{
+	} else if(read_size == -1) {
 		perror("recv failed");
 	}
 
