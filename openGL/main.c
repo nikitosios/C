@@ -51,25 +51,22 @@ void reshape(int w, int h)
 /* glColor* — задает цвет всех примитивов до следующего glColor* */
 /* glVertex* — задает вершину */
 
+float angle = 0.0f;
+
 void display(void)
 {
-	float angle = 45;
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glRotatef(angle, 0.0f, 1.0f, 0.0f);
 
 	glBegin(GL_QUADS);
 	glColor3f(1.0, 0.0, 0.0);
-	glVertex2i(0, 0);
-	glVertex2i(100, 0);
-	glVertex2i(100, 100);
-	glVertex2i(0, 100);
 	glVertex2i(300, 400);
 	glVertex2i(300, 300);
 	glVertex2i(400, 300);
 	glVertex2i(400, 400);
 	glEnd();
 
+	angle += 0.1f;
 	glutSwapBuffers();
 }
 
