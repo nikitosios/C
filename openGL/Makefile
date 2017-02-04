@@ -4,7 +4,7 @@ LDFLAGS=-lglut -lGLU -lGL
 EXECUTABLE=opengl
 
 all: clean
-	$(CC) $(CFLAGS) -o $(EXECUTABLE) main.c $(LDFLAGS)
+	@$(CC) $(CFLAGS) -o $(EXECUTABLE) main.c $(LDFLAGS)
 
 clean:
-	rm -f $(EXECUTABLE)
+	@rm -f $(EXECUTABLE)
