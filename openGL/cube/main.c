@@ -7,7 +7,7 @@
 unsigned short window_width = 800, window_height = 600;
 
 /* initializes 3D rendering */
-void init3D(void) {
+void initGL(void) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_LIGHTING); /* enable lighting */
@@ -15,6 +15,7 @@ void init3D(void) {
 	glEnable(GL_LIGHT1); /* enable light #1 */
 	glEnable(GL_NORMALIZE); /* automatically normalize normals */
 	/* glShadeModel(GL_SMOOTH); */ /* enable smooth shading */
+	return;
 }
 
 /* called when the window is resized */
@@ -23,9 +24,10 @@ void handleResize(int w, int h) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(45.0, (double)w / (double)h, 1.0, 200.0);
+	return;
 }
 
-float _angle = -70.0;
+float angle = -70.0;
 
 /* draws the 3D scene */
 void drawScene(void) {
@@ -33,103 +35,98 @@ void drawScene(void) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
-	glTranslatef(0.0f, 0.0f, -8.0f);
+	glTranslatef(0.0, 0.0, -8.0);
 	
 	/* add ambient light */
-	GLfloat ambientColor[] = {0.2f, 0.2f, 0.2f, 1.0f}; /* Color (0.2, 0.2, 0.2) */
+	GLfloat ambientColor[] = { 0.2, 0.2, 0.2, 1.0 };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
 	
 	/* add positioned light */
-	GLfloat lightColor0[] = {0.5f, 0.5f, 0.5f, 1.0f}; /* color (0.5, 0.5, 0.5) */
-	GLfloat lightPos0[] = {4.0f, 0.0f, 8.0f, 1.0f}; /* positioned at (4, 0, 8) */
+	GLfloat lightColor0[] = { 0.5, 0.5, 0.5, 1.0 };
+	GLfloat lightPos0[] = { 4.0, 0.0, 8.0, 1.0 };
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
 	
 	/* add directed light */
-	GLfloat lightColor1[] = {0.5f, 0.2f, 0.2f, 1.0f}; /* color (0.5, 0.2, 0.2) */
+	GLfloat lightColor1[] = { 0.5, 0.2, 0.2, 1.0 };
 	/* coming from the direction (-1, 0.5, 0.5) */
-	GLfloat lightPos1[] = {-1.0f, 0.5f, 0.5f, 0.0f};
+	GLfloat lightPos1[] = { -1.0, 0.5, 0.5, 0.0 };
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor1);
 	glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
 	
-	glRotatef(_angle, 0.0f, 1.0f, 0.0f);
-	glColor3f(1.0f, 1.0f, 0.0f);
+	glRotatef(angle, 0.0, 1.0, 0.0);
+	glColor3f(1.0, 1.0, 0.0);
 	glBegin(GL_QUADS);
 	
-	//Front
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	//glNormal3f(-1.0f, 0.0f, 1.0f);
-	glVertex3f(-1.5f, -1.0f, 1.5f);
-	//glNormal3f(1.0f, 0.0f, 1.0f);
-	glVertex3f(1.5f, -1.0f, 1.5f);
-	//glNormal3f(1.0f, 0.0f, 1.0f);
-	glVertex3f(1.5f, 1.0f, 1.5f);
-	//glNormal3f(-1.0f, 0.0f, 1.0f);
-	glVertex3f(-1.5f, 1.0f, 1.5f);
+	/* front */
+	glNormal3f(0.0, 0.0, 1.0);
+	glVertex3f(-1.5, -1.0, 1.5);
+	glVertex3f(1.5, -1.0, 1.5);
+	glVertex3f(1.5, 1.0, 1.5);
+	glVertex3f(-1.5, 1.0, 1.5);
 	
-	//Right
-	glNormal3f(1.0f, 0.0f, 0.0f);
-	//glNormal3f(1.0f, 0.0f, -1.0f);
-	glVertex3f(1.5f, -1.0f, -1.5f);
-	//glNormal3f(1.0f, 0.0f, -1.0f);
-	glVertex3f(1.5f, 1.0f, -1.5f);
-	//glNormal3f(1.0f, 0.0f, 1.0f);
-	glVertex3f(1.5f, 1.0f, 1.5f);
-	//glNormal3f(1.0f, 0.0f, 1.0f);
-	glVertex3f(1.5f, -1.0f, 1.5f);
+	/* back */
+	glNormal3f(0.0, 0.0, -1.0);
+	glVertex3f(-1.5, -1.0, -1.5);
+	glVertex3f(-1.5, 1.0, -1.5);
+	glVertex3f(1.5, 1.0, -1.5);
+	glVertex3f(1.5, -1.0, -1.5);
 	
-	//Back
-	glNormal3f(0.0f, 0.0f, -1.0f);
-	//glNormal3f(-1.0f, 0.0f, -1.0f);
-	glVertex3f(-1.5f, -1.0f, -1.5f);
-	//glNormal3f(-1.0f, 0.0f, -1.0f);
-	glVertex3f(-1.5f, 1.0f, -1.5f);
-	//glNormal3f(1.0f, 0.0f, -1.0f);
-	glVertex3f(1.5f, 1.0f, -1.5f);
-	//glNormal3f(1.0f, 0.0f, -1.0f);
-	glVertex3f(1.5f, -1.0f, -1.5f);
+	/* right */
+	glNormal3f(1.0, 0.0, 0.0);
+	glVertex3f(1.5, -1.0, -1.5);
+	glVertex3f(1.5, 1.0, -1.5);
+	glVertex3f(1.5, 1.0, 1.5);
+	glVertex3f(1.5, -1.0, 1.5);
 	
-	//Left
-	glNormal3f(-1.0f, 0.0f, 0.0f);
-	//glNormal3f(-1.0f, 0.0f, -1.0f);
-	glVertex3f(-1.5f, -1.0f, -1.5f);
-	//glNormal3f(-1.0f, 0.0f, 1.0f);
-	glVertex3f(-1.5f, -1.0f, 1.5f);
-	//glNormal3f(-1.0f, 0.0f, 1.0f);
-	glVertex3f(-1.5f, 1.0f, 1.5f);
-	//glNormal3f(-1.0f, 0.0f, -1.0f);
-	glVertex3f(-1.5f, 1.0f, -1.5f);
+	/* left */
+	glNormal3f(-1.0, 0.0, 0.0);
+	glVertex3f(-1.5, -1.0, -1.5);
+	glVertex3f(-1.5, -1.0, 1.5);
+	glVertex3f(-1.5, 1.0, 1.5);
+	glVertex3f(-1.5, 1.0, -1.5);
+	
+	/* up */
+	glNormal3f(0.0, 1.0, 0.0);
+	glVertex3f(-1.5, 1.0, -1.5);
+	glVertex3f(1.5, 1.0, -1.5);
+	glVertex3f(1.5, 1.0, 1.5);
+	glVertex3f(-1.5, 1.0, 1.5);
+	
+	/* down */
+	glNormal3f(0.0, -1.0, 0.0);
+	glVertex3f(-1.5, -1.0, -1.5);
+	glVertex3f(1.5, -1.0, -1.5);
+	glVertex3f(1.5, -1.0, 1.5);
+	glVertex3f(-1.5, -1.0, 1.5);
 	
 	glEnd();
 	glutSwapBuffers();
 }
 
 void update(int value) {
-	_angle += 1.5;
-	if (_angle > 360) {
-		_angle -= 360;
-	}
+	angle += 1.5;
+	if (angle > 360)
+		angle -= 360;
 	
 	glutPostRedisplay();
 	glutTimerFunc(25, update, 0);
 }
 
-int main(int argc, char** argv) {
-	//Initialize GLUT
+int main(int argc, char **argv) {
+	/* initialize GLUT */
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(window_width, window_height);
 	
-	//Create the window
+	/* create the window */
 	glutCreateWindow("Lighting - videotutorialsrock.com");
-	init3D();
+	initGL();
 	
-	//Set handler functions
+	/* set handler functions */
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(handleResize);
-	
-	glutTimerFunc(25, update, 0); //Add a timer
-	
+	glutTimerFunc(25, update, 0); /* add a timer */
 	glutMainLoop();
 	return 0;
 }
