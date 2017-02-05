@@ -1,8 +1,8 @@
 #ifndef API_H
 #define API_H
 
-#define drawCube(a, b, c, d) drawBox(a, b, c, d, d, d)
+#define drawCube(a, R, G, B) drawBox(a, a, a, R, G, B)
 
-void drawCube(float, float, float, float, float, float);
+void drawBox(float, float, float, float, float, float);
 
 #endif

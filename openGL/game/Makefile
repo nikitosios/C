@@ -7,6 +7,7 @@ PROJDIR=game
 EXECUTABLE=game
 
 all: clean $(OBJECTS)
+	@mkdir -p $(PROJDIR)
 	@$(CC) $(CFLAGS) -o $(PROJDIR)/$(EXECUTABLE) build/* $(LDFLAGS)
 
 $(OBJECTS): $(SOURCES)

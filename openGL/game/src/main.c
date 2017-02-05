@@ -3,20 +3,22 @@
 
 #define WINDOW_TITLE "My cube"
 
+float rotate_x = 0, rotate_y = 0;
+
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
-	glBegin(GL_POLYGON);
-	glColor3f(0.0, 1.0, 0.0);
-	glVertex3f(-100.0, -100.0, 0.0);
-	glVertex3f(-100.0, 100.0, 0.0);
-	glVertex3f(100.0, 100.0, 0.0);
-	glVertex3f(100.0, -100.0, 0.0);
-	glEnd();
+	glTranslatef(0.0, -0.5, 0.0);
+	glRotatef(10, 0.1, 0.0, 0.0);
+	drawBox(100.0, 0.1, 100.0, 0.0, 1.0, 0.0);
+	glTranslatef(0.0, 0.5, 0.0);
 
-	drawCube(0.5, 0.5, 1.0, 1.0);
+	glTranslatef(0.0, 0.05, 0.0);
+	glRotatef(rotate_x, 1.0, 0.0, 0.0);
+	glRotatef(rotate_y, 0.0, 1.0, 0.0);
+	drawCube(0.1, 1.0, 0.0, 0.0);
 
 	glFlush();
 	glutSwapBuffers();
@@ -25,6 +27,15 @@ void display(void)
 
 void specialKeys(int key, int x, int y)
 {
+	if (key == GLUT_KEY_UP)
+		rotate_x += 5;
+	else if (key == GLUT_KEY_DOWN)
+		rotate_x -= 5;
+	else if (key == GLUT_KEY_LEFT)
+		rotate_y -= 5;
+	else if (key == GLUT_KEY_RIGHT)
+		rotate_y += 5;
+
 	glutPostRedisplay();
 	return;
 }
