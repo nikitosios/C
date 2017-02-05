@@ -14,6 +14,7 @@ void drawBox(float a, float b, float c, float R, float G, float B)
 	glEnd();
 
 	glBegin(GL_POLYGON);
+	glColor3f(R, G, B);
 	glVertex3f(xr, y, zf);
 	glVertex3f(xr, yd, zf);
 	glVertex3f(x, yd, zf);
@@ -21,6 +22,7 @@ void drawBox(float a, float b, float c, float R, float G, float B)
 	glEnd();
 
 	glBegin(GL_POLYGON);
+	glColor3f(R, G, B);
 	glVertex3f(xr, y, z);
 	glVertex3f(xr, yd, z);
 	glVertex3f(xr, yd, zf);
@@ -28,6 +30,7 @@ void drawBox(float a, float b, float c, float R, float G, float B)
 	glEnd();
 
 	glBegin(GL_POLYGON);
+	glColor3f(R, G, B);
 	glVertex3f(x, y, zf);
 	glVertex3f(x, yd, zf);
 	glVertex3f(x, yd, z);
@@ -35,6 +38,7 @@ void drawBox(float a, float b, float c, float R, float G, float B)
 	glEnd();
 
 	glBegin(GL_POLYGON);
+	glColor3f(R, G, B);
 	glVertex3f(xr, yd, zf);
 	glVertex3f(xr, yd, z);
 	glVertex3f(x, yd, z);
@@ -42,6 +46,7 @@ void drawBox(float a, float b, float c, float R, float G, float B)
 	glEnd();
 
 	glBegin(GL_POLYGON);
+	glColor3f(R, G, B);
 	glVertex3f(xr, y, z);
 	glVertex3f(xr, y, zf);
 	glVertex3f(x, y, zf);

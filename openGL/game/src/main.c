@@ -40,6 +40,24 @@ void specialKeys(int key, int x, int y)
 	return;
 }
 
+void init(void)
+{
+	float light_ambient[] = { 0.3, 0.3, 0.3, 1.0 };
+	float light_diffuse[] = { 0.7, 0.7, 0.7, 1.0 };
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_COLOR_MATERIAL);
+	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+	glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+	glEnable(GL_NORMALIZE);
+	glEnable(GL_DEPTH_TEST);
+	glClearColor(0.0, 0.0, 1.0, 1.0);
+	return;
+}
+
 int main(int argc, char *argv[])
 {
 	unsigned short window_width = 640, window_height = 480;
@@ -49,7 +67,7 @@ int main(int argc, char *argv[])
 	glutInitWindowSize(window_width, window_height);
 	glutInitWindowPosition(200, 200);
 	glutCreateWindow(WINDOW_TITLE);
-	glEnable(GL_DEPTH_TEST);
+	init();
 	glutDisplayFunc(display);
 	glutSpecialFunc(specialKeys);
 	glutMainLoop();

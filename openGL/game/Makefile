@@ -16,4 +16,4 @@ $(OBJECTS): $(SOURCES)
 	@mv *.o build
 
 clean:
-	@rm -rf $(PROJDIR) build *.o
+	@rm -rf build *.o
