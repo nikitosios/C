@@ -1,95 +1,136 @@
-#include <GL/freeglut.h>
+/* File for "Lighting" lesson of the OpenGL tutorial on
+ * www.videotutorialsrock.com
+ */
 
-#define WINDOW_TITLE "My cube"
+#include <GL/glut.h>
 
-double rotate_x = 0, rotate_y = 0;
+unsigned short window_width = 800, window_height = 600;
 
-void display(void)
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//Initializes 3D rendering
+void init3D(void) {
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING); //Enable lighting
+	glEnable(GL_LIGHT0); //Enable light #0
+	glEnable(GL_LIGHT1); //Enable light #1
+	glEnable(GL_NORMALIZE); //Automatically normalize normals
+	//glShadeModel(GL_SMOOTH); //Enable smooth shading
+}
+
+//Called when the window is resized
+void handleResize(int w, int h) {
+	glViewport(0, 0, w, h);
+	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glRotatef(rotate_x, 1.0, 0.0, 0.0);
-	glRotatef(rotate_y, 0.0, 1.0, 0.0);
+	gluPerspective(45.0, (double)w / (double)h, 1.0, 200.0);
+}
 
-	glBegin(GL_POLYGON);
-	glColor3f(1.0, 0.0, 0.0); glVertex3f(0.5, -0.5, -0.5);
-	glColor3f(0.0, 1.0, 0.0); glVertex3f(0.5, 0.5, -0.5);
-	glColor3f(0.0, 0.0, 1.0); glVertex3f(-0.5, 0.5, -0.5);
-	glColor3f(1.0, 0.0, 1.0); glVertex3f(-0.5, -0.5, -0.5);
+float _angle = -70.0f;
+
+//Draws the 3D scene
+void drawScene() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	
+	glTranslatef(0.0f, 0.0f, -8.0f);
+	
+	//Add ambient light
+	GLfloat ambientColor[] = {0.2f, 0.2f, 0.2f, 1.0f}; //Color (0.2, 0.2, 0.2)
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
+	
+	//Add positioned light
+	GLfloat lightColor0[] = {0.5f, 0.5f, 0.5f, 1.0f}; //Color (0.5, 0.5, 0.5)
+	GLfloat lightPos0[] = {4.0f, 0.0f, 8.0f, 1.0f}; //Positioned at (4, 0, 8)
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
+	
+	//Add directed light
+	GLfloat lightColor1[] = {0.5f, 0.2f, 0.2f, 1.0f}; //Color (0.5, 0.2, 0.2)
+	//Coming from the direction (-1, 0.5, 0.5)
+	GLfloat lightPos1[] = {-1.0f, 0.5f, 0.5f, 0.0f};
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor1);
+	glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
+	
+	glRotatef(_angle, 0.0f, 1.0f, 0.0f);
+	glColor3f(1.0f, 1.0f, 0.0f);
+	glBegin(GL_QUADS);
+	
+	//Front
+	glNormal3f(0.0f, 0.0f, 1.0f);
+	//glNormal3f(-1.0f, 0.0f, 1.0f);
+	glVertex3f(-1.5f, -1.0f, 1.5f);
+	//glNormal3f(1.0f, 0.0f, 1.0f);
+	glVertex3f(1.5f, -1.0f, 1.5f);
+	//glNormal3f(1.0f, 0.0f, 1.0f);
+	glVertex3f(1.5f, 1.0f, 1.5f);
+	//glNormal3f(-1.0f, 0.0f, 1.0f);
+	glVertex3f(-1.5f, 1.0f, 1.5f);
+	
+	//Right
+	glNormal3f(1.0f, 0.0f, 0.0f);
+	//glNormal3f(1.0f, 0.0f, -1.0f);
+	glVertex3f(1.5f, -1.0f, -1.5f);
+	//glNormal3f(1.0f, 0.0f, -1.0f);
+	glVertex3f(1.5f, 1.0f, -1.5f);
+	//glNormal3f(1.0f, 0.0f, 1.0f);
+	glVertex3f(1.5f, 1.0f, 1.5f);
+	//glNormal3f(1.0f, 0.0f, 1.0f);
+	glVertex3f(1.5f, -1.0f, 1.5f);
+	
+	//Back
+	glNormal3f(0.0f, 0.0f, -1.0f);
+	//glNormal3f(-1.0f, 0.0f, -1.0f);
+	glVertex3f(-1.5f, -1.0f, -1.5f);
+	//glNormal3f(-1.0f, 0.0f, -1.0f);
+	glVertex3f(-1.5f, 1.0f, -1.5f);
+	//glNormal3f(1.0f, 0.0f, -1.0f);
+	glVertex3f(1.5f, 1.0f, -1.5f);
+	//glNormal3f(1.0f, 0.0f, -1.0f);
+	glVertex3f(1.5f, -1.0f, -1.5f);
+	
+	//Left
+	glNormal3f(-1.0f, 0.0f, 0.0f);
+	//glNormal3f(-1.0f, 0.0f, -1.0f);
+	glVertex3f(-1.5f, -1.0f, -1.5f);
+	//glNormal3f(-1.0f, 0.0f, 1.0f);
+	glVertex3f(-1.5f, -1.0f, 1.5f);
+	//glNormal3f(-1.0f, 0.0f, 1.0f);
+	glVertex3f(-1.5f, 1.0f, 1.5f);
+	//glNormal3f(-1.0f, 0.0f, -1.0f);
+	glVertex3f(-1.5f, 1.0f, -1.5f);
+	
 	glEnd();
-
-	glBegin(GL_POLYGON);
-	glColor3f(1.0, 1.0, 1.0);
-	glVertex3f(0.5, -0.5, 0.5);
-	glVertex3f(0.5, 0.5, 0.5);
-	glVertex3f(-0.5, 0.5, 0.5);
-	glVertex3f( -0.5, -0.5, 0.5);
-	glEnd();
-
-	glBegin(GL_POLYGON);
-	glColor3f(1.0, 0.0, 1.0);
-	glVertex3f(0.5, -0.5, -0.5);
-	glVertex3f(0.5, 0.5, -0.5);
-	glVertex3f(0.5, 0.5, 0.5);
-	glVertex3f(0.5, -0.5, 0.5);
-	glEnd();
-
-	glBegin(GL_POLYGON);
-	glColor3f(0.0, 1.0, 0.0);
-	glVertex3f(-0.5, -0.5, 0.5);
-	glVertex3f(-0.5, 0.5, 0.5);
-	glVertex3f(-0.5, 0.5, -0.5);
-	glVertex3f(-0.5, -0.5, -0.5);
-	glEnd();
-
-	glBegin(GL_POLYGON);
-	glColor3f(0.0, 0.0, 1.0);
-	glVertex3f(0.5, 0.5, 0.5);
-	glVertex3f(0.5, 0.5, -0.5);
-	glVertex3f(-0.5, 0.5, -0.5);
-	glVertex3f(-0.5, 0.5, 0.5);
-	glEnd();
-
-	glBegin(GL_POLYGON);
-	glColor3f(1.0, 0.0, 0.0);
-	glVertex3f(0.5, -0.5, -0.5);
-	glVertex3f(0.5, -0.5, 0.5);
-	glVertex3f(-0.5, -0.5, 0.5);
-	glVertex3f(-0.5, -0.5, -0.5);
-	glEnd();
-
-	glFlush();
 	glutSwapBuffers();
-	return;
 }
 
-void specialKeys(int key, int x, int y)
-{
-	if (key == GLUT_KEY_RIGHT)
-		rotate_y += 5;
-	else if (key == GLUT_KEY_LEFT)
-		rotate_y -= 5;
-	else if (key == GLUT_KEY_UP)
-		rotate_x += 5;
-	else if (key == GLUT_KEY_DOWN)
-		rotate_x -= 5;
-
+void update(int value) {
+	_angle += 1.5;
+	if (_angle > 360) {
+		_angle -= 360;
+	}
+	
 	glutPostRedisplay();
-	return;
+	glutTimerFunc(25, update, 0);
 }
 
-int main(int argc, char *argv[])
-{
-	unsigned short window_width = 640, window_height = 480;
-
+int main(int argc, char** argv) {
+	//Initialize GLUT
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(window_width, window_height);
-	glutInitWindowPosition(200, 200);
-	glutCreateWindow(WINDOW_TITLE);
-	glEnable(GL_DEPTH_TEST);
-	glutDisplayFunc(display);
-	glutSpecialFunc(specialKeys);
+	
+	//Create the window
+	glutCreateWindow("Lighting - videotutorialsrock.com");
+	init3D();
+	
+	//Set handler functions
+	glutDisplayFunc(drawScene);
+	glutReshapeFunc(handleResize);
+	
+	glutTimerFunc(25, update, 0); //Add a timer
+	
 	glutMainLoop();
 	return 0;
 }

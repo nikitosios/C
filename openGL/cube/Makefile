@@ -1,10 +1,13 @@
 CC=gcc
 CFLAGS=-Wall
-LDFLAGS=-lglut -lGLU -lGL
-EXECUTABLE=opengl
+LDFLAGS=-lglut -lGL -lGLU
+PROG=lighting
+SRCS=main.c
 
-all: clean
-	@$(CC) $(CFLAGS) -o $(EXECUTABLE) main.c $(LDFLAGS)
+all: $(PROG)
+
+$(PROG): $(SRCS)
+	$(CC) $(CFLAGS) -o $(PROG) $(SRCS) $(LDFLAGS)
 
 clean:
-	@rm -f $(EXECUTABLE)
+	rm -f $(PROG)
