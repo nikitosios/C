@@ -1,6 +1,6 @@
-void drawCube(float x, float y, float z, float a)
+void drawBox(float x, float y, float z, float a, float b, float c)
 {
-	unsigned short xr = x + a, yd = y + a, zf = z + a;
+	unsigned short xr = x + a, yd = y + b, zf = z + c;
 
 	glBegin(GL_POLYGON);
 	glVertex3f(xr, y, z);
