@@ -7,7 +7,7 @@ SRCS=main.c
 all: $(PROG)
 
 $(PROG): $(SRCS)
-	$(CC) $(CFLAGS) -o $(PROG) $(SRCS) $(LDFLAGS)
+	@$(CC) $(CFLAGS) -o $(PROG) $(SRCS) $(LDFLAGS)
 
 clean:
-	rm -f $(PROG)
+	@rm -f $(PROG)
