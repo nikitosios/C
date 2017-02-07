@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-Wall
-LDFLAGS=-lglut -lGL -lGLU
+LDFLAGS=-lglut -lGL -lGLU -lSOIL
 PROGDIR=game
 PROG=game
 SRCS=src/*.c
