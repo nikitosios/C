@@ -54,5 +54,61 @@ void drawBox(float a, float b, float c)
 
 void drawPyramidDown(float a, float b, float h)
 {
+	float startx1 = 0 - a / 2, y1 = h / 2, startz1 = a / 2;
+	float endx1 = a / 2, endz1 = 0 - a / 2;
+	float startx2 = 0 - b / 2, y2 = 0 - h / 2, startz2 = b / 2;
+	float endx2 = b / 2, endz2 = 0 - b / 2;
+
+	glBegin(GL_QUADS);
+
+	glNormal3f(0.0, 1.0, 0.0);
+	glVertex3f(startx1, y1, startz1);
+	glVertex3f(endx1, y1, startz1);
+	glVertex3f(endx1, y1, endz1);
+	glVertex3f(startx1, y1, endz1);
+
+	glNormal3f(0.0, -1.0, 0.0);
+	glVertex3f(startx2, y2, startz2);
+	glVertex3f(endx2, y2, startz2);
+	glVertex3f(endx2, y2, endz2);
+	glVertex3f(startx2, y2, endz2);
+
+	glEnd();
+	glBegin(GL_POLYGON);
+
+	/* glNormal3f(); */
+	glVertex3f(startx1, y1, startz1);
+	glVertex3f(endx1, y1, startz1);
+	glVertex3f(endx2, y2, startz2);
+	glVertex3f(startx2, y2, startz2);
+
+	glEnd();
+	glBegin(GL_POLYGON);
+
+	/* glNormal3f(); */
+	glVertex3f(startx1, y1, endz1);
+	glVertex3f(endx1, y1, endz1);
+	glVertex3f(endx2, y2, endz2);
+	glVertex3f(startx2, y2, endz2);
+
+	glEnd();
+	glBegin(GL_POLYGON);
+
+	/* glNormal3f(); */
+	glVertex3f(startx1, y1, endz1);
+	glVertex3f(startx1, y1, startz1);
+	glVertex3f(startx2, y2, startz2);
+	glVertex3f(startx2, y2, endz2);
+
+	glEnd();
+	glBegin(GL_POLYGON);
+
+	/* glNormal3f(); */
+	glVertex3f(endx1, y1, startz1);
+	glVertex3f(endx1, y1, endz1);
+	glVertex3f(endx2, y2, endz2);
+	glVertex3f(endx2, y2, startz2);
+
+	glEnd();
 	return;
 }
