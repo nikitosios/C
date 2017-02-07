@@ -1,9 +1,9 @@
 #include <GL/glut.h>
 
-void drawBox(double a, double b, double c)
+void drawBox(float a, float b, float c)
 {
-	double startx = 0 - a / 2, starty = b / 2, startz = c / 2;
-	double endx = a / 2, endy = 0 - b / 2, endz = 0 - c / 2;
+	float startx = 0 - a / 2, starty = b / 2, startz = c / 2;
+	float endx = a / 2, endy = 0 - b / 2, endz = 0 - c / 2;
 
 	glBegin(GL_QUADS);
 	
@@ -50,4 +50,9 @@ void drawBox(double a, double b, double c)
 	glVertex3f(startx, endy, startz);
 	
 	glEnd();
+}
+
+void drawPyramidDown(float a, float b, float h)
+{
+	return;
 }

@@ -5,7 +5,10 @@
 #include <GL/glut.h>
 #include "api.h"
 
+#define MOUSE_MOTION_STEP 0.2
+
 unsigned short window_width = 800, window_height = 600;
+float rotate_camera_x = 0, rotate_camera_y = 3;
 
 /* initializes 3D rendering */
 void initGL(void) {
@@ -36,6 +39,9 @@ void drawScene(void) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
+	gluLookAt(0.0, 4.0, 5.0,
+			rotate_camera_x, rotate_camera_y, 0.0,
+			0.0, 1.0, 0.0);
 	glTranslatef(0.0, 0.0, -8.0);
 	
 	/* add ambient light */
@@ -54,12 +60,43 @@ void drawScene(void) {
 	GLfloat lightPos1[] = { -1.0, 0.5, 0.5, 0.0 };
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor1);
 	glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
+
+	glTranslatef(0.0, -0.05, 0.0);
+	glColor3f(0.0, 1.0, 0.0);
+	drawBox(500.0, 0.1, 500.0);
+	glTranslatef(0.0, 0.05, 0.0);
 	
+	glTranslatef(0.0, 1.0, 0.0);
 	glRotatef(angle, 0.0, 1.0, 0.0);
 	glColor3f(1.0, 1.0, 0.0);
 	drawCube(2.0);
+	glTranslatef(0.0, -1.0, 0.0);
+
+	glTranslatef(3.0, 0.0, 0.0);
+	glColor3f(0.0, 0.1, 0.0);
+	drawPyramidDown(0.7, 2.0, 2.0);
+	glTranslatef(-3.0, 0.0, 0.0);
 
 	glutSwapBuffers();
+}
+
+void passiveMMotion(int x, int y)
+{
+	static int last_x, last_y;
+
+	if (x - last_x > 10)
+		rotate_camera_x += MOUSE_MOTION_STEP;
+	if (x - last_x < -10)
+		rotate_camera_x -= MOUSE_MOTION_STEP;
+	if (y - last_y > -10)
+		rotate_camera_y -= MOUSE_MOTION_STEP;
+	if (y - last_y < 10)
+		rotate_camera_y += MOUSE_MOTION_STEP;
+	if (abs(x - last_x) > 10)
+		last_x = x;
+	if (abs(y - last_y) > 10)
+		last_y = y;
+	return;
 }
 
 void update(int value) {
@@ -84,6 +121,7 @@ int main(int argc, char **argv) {
 	/* set handler functions */
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(handleResize);
+	glutPassiveMotionFunc(passiveMMotion);
 	glutTimerFunc(25, update, 0); /* add a timer */
 	glutMainLoop();
 	return 0;
