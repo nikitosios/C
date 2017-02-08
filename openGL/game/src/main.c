@@ -9,16 +9,37 @@
 
 unsigned short window_width = 800, window_height = 600;
 float rotate_camera_x = 0.0, rotate_camera_y = 3.0;
+unsigned int pyramidT;
+
+unsigned int loadTextureFromFile(char* filename, int* w, int* h)
+{
+	unsigned int textureID;
+
+	unsigned char *pixels = SOIL_load_image(filename, w, h, 0, SOIL_LOAD_RGB);
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, *w, *h, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	free(pixels);
+	return textureID;
+}
 
 /* initializes 3D rendering */
 void initGL(void) {
+	int pyramidTW, pyramidTH;
+
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_LIGHTING); /* enable lighting */
 	glEnable(GL_LIGHT0); /* enable light #0 */
 	glEnable(GL_LIGHT1); /* enable light #1 */
 	glEnable(GL_NORMALIZE); /* automatically normalize normals */
+	glEnable(GL_TEXTURE_2D);
 	/* glShadeModel(GL_SMOOTH); */ /* enable smooth shading */
+
+	pyramidT = loadTextureFromFile("pyramid.jpg", &pyramidTW, &pyramidTH);
 	return;
 }
 
