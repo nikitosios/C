@@ -102,14 +102,19 @@ void drawPyramidDown(float a, float b, float h)
 	glBegin(GL_POLYGON);
 
 	/* front */
-	glNormal3fv(multipleVectors(
-				new_Vector(startx1 - endx1, 0, 0),
-				new_Vector(endx2 - endx1,
-					y2 - y1, startz2 - startz1)));
+	/* glNormal3fv(multipleVectors( */
+				/* new_Vector(startx1 - endx1, 0, 0), */
+				/* new_Vector(endx2 - endx1, */
+					/* y2 - y1, startz2 - startz1))); */
+	glNormal3f(0.0, 0.0, 1.0);
+	glTexCoord2f(0.0, 1.0);
 	glVertex3f(startx1, y1, startz1);
+	glTexCoord2f(1.0, 1.0);
 	glVertex3f(endx1, y1, startz1);
-	glVertex3f(endx2, y2, startz2);
-	glVertex3f(startx2, y2, startz2);
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(endx2, y2, startz1);
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(startx2, y2, startz1);
 
 	glEnd();
 	glBegin(GL_POLYGON);

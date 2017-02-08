@@ -36,7 +36,6 @@ void initGL(void) {
 	glEnable(GL_LIGHT0); /* enable light #0 */
 	glEnable(GL_LIGHT1); /* enable light #1 */
 	glEnable(GL_NORMALIZE); /* automatically normalize normals */
-	glEnable(GL_TEXTURE_2D);
 	/* glShadeModel(GL_SMOOTH); */ /* enable smooth shading */
 
 	pyramidT = loadTextureFromFile("pyramid.jpg", &pyramidTW, &pyramidTH);
@@ -97,10 +96,12 @@ void drawScene(void) {
 	glTranslatef(3.0, 1.1, 0.0);
 	glRotatef(angle, 0.0, 1.0, 0.0);
 	glColor3f(0.6, 0.6, 0.6);
+	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, pyramidT);
 	drawPyramidDown(1.0, 2.0, 2.0);
 	glRotatef(-angle, 0.0, 1.0, 0.0);
 	glTranslatef(-3.0, -1.1, 0.0);
+	glDisable(GL_TEXTURE_2D);
 
 	glutSwapBuffers();
 }
