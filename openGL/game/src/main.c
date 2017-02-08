@@ -8,7 +8,7 @@
 #define MOUSE_MOTION_STEP 0.2
 
 unsigned short window_width = 800, window_height = 600;
-float rotate_camera_x = 0, rotate_camera_y = 3;
+float rotate_camera_x = 0.0, rotate_camera_y = 3.0;
 
 /* initializes 3D rendering */
 void initGL(void) {
@@ -31,7 +31,7 @@ void handleResize(int w, int h) {
 	return;
 }
 
-float angle = -70.0;
+float angle = 0.0;
 
 /* draws the 3D scene */
 void drawScene(void) {

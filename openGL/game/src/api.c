@@ -84,12 +84,14 @@ void drawPyramidDown(float a, float b, float h)
 
 	glBegin(GL_QUADS);
 
+	/* up */
 	glNormal3f(0.0, 1.0, 0.0);
 	glVertex3f(startx1, y1, startz1);
 	glVertex3f(endx1, y1, startz1);
 	glVertex3f(endx1, y1, endz1);
 	glVertex3f(startx1, y1, endz1);
 
+	/* down */
 	glNormal3f(0.0, -1.0, 0.0);
 	glVertex3f(startx2, y2, startz2);
 	glVertex3f(endx2, y2, startz2);
@@ -99,9 +101,10 @@ void drawPyramidDown(float a, float b, float h)
 	glEnd();
 	glBegin(GL_POLYGON);
 
+	/* front */
 	glNormal3fv(multipleVectors(
-				new_Vector(endx1 - startx1, 0, 0),
-				new_Vector(startx2 - startx1,
+				new_Vector(startx1 - endx1, 0, 0),
+				new_Vector(endx2 - endx1,
 					y2 - y1, startz2 - startz1)));
 	glVertex3f(startx1, y1, startz1);
 	glVertex3f(endx1, y1, startz1);
@@ -111,11 +114,11 @@ void drawPyramidDown(float a, float b, float h)
 	glEnd();
 	glBegin(GL_POLYGON);
 
+	/* back */
 	glNormal3fv(multipleVectors(
 				new_Vector(endx1 - startx1, 0, 0),
-				new_Vector(startx1 - startx2,
-					y2 - y1, startz2 - startz1)
-				));
+				new_Vector(startx2 - startx1,
+					y2 - y1, startz2 - startz1)));
 	glVertex3f(startx1, y1, endz1);
 	glVertex3f(endx1, y1, endz1);
 	glVertex3f(endx2, y2, endz2);
@@ -124,11 +127,11 @@ void drawPyramidDown(float a, float b, float h)
 	glEnd();
 	glBegin(GL_POLYGON);
 
+	/* left */
 	glNormal3fv(multipleVectors(
 				new_Vector(0, 0, endz1 - startz1),
 				new_Vector(startx2 - startx1, y2 - y1,
-					endz2 - endz1)
-				));
+					startz2 - startz1)));
 	glVertex3f(startx1, y1, endz1);
 	glVertex3f(startx1, y1, startz1);
 	glVertex3f(startx2, y2, startz2);
@@ -137,11 +140,11 @@ void drawPyramidDown(float a, float b, float h)
 	glEnd();
 	glBegin(GL_POLYGON);
 
+	/* right */
 	glNormal3fv(multipleVectors(
-				new_Vector(0, 0, endz1 - startz1),
+				new_Vector(0, 0, startz1 - endz1),
 				new_Vector(endx2 - endx1, y2 - y1,
-					endz2 - endz1)
-				));
+					endz2 - endz1)));
 	glVertex3f(endx1, y1, startz1);
 	glVertex3f(endx1, y1, endz1);
 	glVertex3f(endx2, y2, endz2);
