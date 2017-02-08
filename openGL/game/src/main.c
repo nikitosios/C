@@ -74,8 +74,10 @@ void drawScene(void) {
 	glTranslatef(0.0, -1.0, 0.0);
 
 	glTranslatef(3.0, 1.1, 0.0);
+	glRotatef(angle, 0.0, 1.0, 0.0);
 	glColor3f(0.6, 0.6, 0.6);
 	drawPyramidDown(1.0, 2.0, 2.0);
+	glRotatef(-angle, 0.0, 1.0, 0.0);
 	glTranslatef(-3.0, -1.1, 0.0);
 
 	glutSwapBuffers();

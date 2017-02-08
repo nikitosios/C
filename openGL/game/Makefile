@@ -6,7 +6,7 @@ PROG=game
 SRCS=src/*.c
 OBJS=*.o
 
-all: $(PROG)
+all: clean $(PROG)
 
 $(PROG): $(OBJS)
 	@mkdir -p $(PROGDIR)
