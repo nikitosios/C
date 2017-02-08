@@ -20,8 +20,8 @@ unsigned int loadTextureFromFile(char* filename, int* w, int* h)
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, *w, *h, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 	glGenerateMipmap(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	free(pixels);
 	return textureID;
 }
@@ -97,6 +97,7 @@ void drawScene(void) {
 	glTranslatef(3.0, 1.1, 0.0);
 	glRotatef(angle, 0.0, 1.0, 0.0);
 	glColor3f(0.6, 0.6, 0.6);
+	glBindTexture(GL_TEXTURE_2D, pyramidT);
 	drawPyramidDown(1.0, 2.0, 2.0);
 	glRotatef(-angle, 0.0, 1.0, 0.0);
 	glTranslatef(-3.0, -1.1, 0.0);
