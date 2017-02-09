@@ -38,16 +38,6 @@ static void *input_read (void *socket)
 	return NULL;
 }
 
-void send_to_all(char *msg, int sock)
-{
-	extern int *socks;
-
-	for (int i = 0; i < ncon; ++i)
-		if (socks[i] != sock)
-			write(socks[i], msg, strlen(msg));
-	return;
-}
-
 /* this function will handle connection for each client */
 void *connection_handler (void *socket_desc)
 {
@@ -75,7 +65,6 @@ void *connection_handler (void *socket_desc)
 				putchar(client_message[o]);
 		client_message[0] = '\0';
 		printf("---------------------\n");
-		send_to_all(client_message, sock);
 	}
 
 	printf("%s disconnected.\n", nickname);
