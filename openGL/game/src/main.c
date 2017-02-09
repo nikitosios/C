@@ -2,36 +2,48 @@
  * www.videotutorialsrock.com
  */
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <GL/glut.h>
 #include "api.h"
 
 #define MOUSE_MOTION_STEP 0.2
 
+char *progdir;
 unsigned short window_width = 800, window_height = 600;
 float rotate_camera_x = 0.0, rotate_camera_y = 3.0;
 unsigned int pyramidT;
+int pyramidTW, pyramidTH;
 
 unsigned int loadTextureFromFile(char* filename, int* w, int* h)
 {
 	unsigned int textureID;
+	unsigned char *pixels;
+	char buffer[256];
+	char bytes;
+   
+	bytes = strlen(progdir);
+	memcpy(buffer, progdir, bytes - 1);
+	buffer[bytes - 1] = '/';
+	memcpy(buffer + bytes, filename, strlen(filename));
+	printf("loading texture %s\n", buffer);
 
-	unsigned char *pixels = SOIL_load_image(filename, w, h, 0, SOIL_LOAD_RGB);
+	pixels = SOIL_load_image(buffer, w, h, 0, SOIL_LOAD_RGB);
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, *w, *h, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-	glGenerateMipmap(GL_TEXTURE_2D);
+	/* glGenerateMipmap(GL_TEXTURE_2D); */
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	free(pixels);
+	SOIL_free_image_data(pixels);
 	return textureID;
 }
 
 /* initializes 3D rendering */
 void initGL(void) {
-	int pyramidTW, pyramidTH;
-
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_LIGHTING); /* enable lighting */
@@ -98,12 +110,12 @@ void drawScene(void) {
 	glTranslatef(3.0, 1.1, 0.0);
 	glRotatef(angle, 0.0, 1.0, 0.0);
 	glColor3f(0.6, 0.6, 0.6);
-	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, pyramidT);
+	glEnable(GL_TEXTURE_2D);
 	drawPyramidDown(1.0, 2.0, 2.0);
+	glDisable(GL_TEXTURE_2D);
 	glRotatef(-angle, 0.0, 1.0, 0.0);
 	glTranslatef(-3.0, -1.1, 0.0);
-	glDisable(GL_TEXTURE_2D);
 
 	glutSwapBuffers();
 }
@@ -137,6 +149,14 @@ void update(int value) {
 }
 
 int main(int argc, char **argv) {
+	int i;
+
+	for (i = strlen(argv[0]) - 1; argv[0][i] != '/'; --i);
+	progdir = malloc(i + 2);
+	memcpy(progdir, argv[0], i);
+	progdir[i] = '/';
+	progdir[i + 1] = '\0';
+
 	/* initialize GLUT */
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
