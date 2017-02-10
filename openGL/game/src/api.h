@@ -7,6 +7,7 @@
 #define drawCube(a) drawBox(a, a, a)
 
 void drawBox(float, float, float);
+void drawPyramid(float, float);
 void drawPyramidDown(float, float, float);
 float *multipleVectors(float *, float *);
 

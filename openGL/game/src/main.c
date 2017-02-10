@@ -113,6 +113,9 @@ void drawScene(void) {
 	glBindTexture(GL_TEXTURE_2D, pyramidT);
 	glEnable(GL_TEXTURE_2D);
 	drawPyramidDown(1.0, 2.0, 2.0);
+	glTranslatef(0.0, 1.6, 0.0);
+	drawPyramid(1.0, 1.1);
+	glTranslatef(0.0, -1.6, 0.0);
 	glDisable(GL_TEXTURE_2D);
 	glRotatef(-angle, 0.0, 1.0, 0.0);
 	glTranslatef(-3.0, -1.1, 0.0);

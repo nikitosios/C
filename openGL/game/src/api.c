@@ -75,6 +75,73 @@ float *multipleVectors(float *v1, float *v2)
 	return multipleVector;
 }
 
+void drawPyramid(float a, float h)
+{
+	float x = 0.0, y = h / 2, z = 0;
+	float startx = 0 - a / 2, yd = 0 - h / 2, startz = a / 2;
+	float endx = a / 2, endz = 0 - a / 2;
+
+	glBegin(GL_QUADS);
+
+	/* down */
+	glNormal3f(0.0, -1.0, 0.0);
+	glVertex3f(startx, yd, startz);
+	glVertex3f(endx, yd, startz);
+	glVertex3f(endx, yd, endz);
+	glVertex3f(startx, yd, endz);
+
+	glEnd();
+	glBegin(GL_TRIANGLES);
+
+	/* front */
+	glNormal3fv(multipleVectors(
+				new_Vector(endx - startx, 0, 0),
+				new_Vector(x - startx, y - yd, endz - startz)));
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(startx, yd, startz);
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(endx, yd, startz);
+	glTexCoord2f(0.5, 1.0);
+	glVertex3f(x, y, z);
+
+	/* back */
+	glNormal3fv(multipleVectors(
+				new_Vector(startx - endx, 0, 0),
+				new_Vector(x - endx, y - yd, z - endz)));
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(endx, yd, endz);
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(startx, yd, endz);
+	glTexCoord2f(0.5, 1.0);
+	glVertex3f(x, y, z);
+
+	/* left */
+	glNormal3fv(multipleVectors(
+				new_Vector(0, 0, startz - endz),
+				new_Vector(x - startx, y - yd, z - endz)));
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(startx, yd, endz);
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(startx, yd, startz);
+	glTexCoord2f(0.5, 1.0);
+	glVertex3f(x, y, z);
+
+	/* right */
+	glNormal3fv(multipleVectors(
+				new_Vector(0, 0, endz - startz),
+				new_Vector(x - endx, y - yd, z - startz)));
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(endx, yd, startz);
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(endx, yd, endz);
+	glTexCoord2f(0.5, 1.0);
+	glVertex3f(x, y, z);
+
+	glEnd();
+
+	return;
+}
+
 void drawPyramidDown(float a, float b, float h)
 {
 	float startx1 = 0 - a / 2, y1 = h / 2, startz1 = a / 2;
@@ -144,13 +211,13 @@ void drawPyramidDown(float a, float b, float h)
 				new_Vector(0, 0, endz1 - startz1),
 				new_Vector(startx2 - startx1, y2 - y1,
 					startz2 - startz1)));
-	glTexCoord2f(1.0, 1.0);
-	glVertex3f(startx1, y1, endz1);
 	glTexCoord2f(0.0, 1.0);
+	glVertex3f(startx1, y1, endz1);
+	glTexCoord2f(1.0, 1.0);
 	glVertex3f(startx1, y1, startz1);
-	glTexCoord2f(0.0, 0.0);
-	glVertex3f(startx2, y2, startz2);
 	glTexCoord2f(1.0, 0.0);
+	glVertex3f(startx2, y2, startz2);
+	glTexCoord2f(0.0, 0.0);
 	glVertex3f(startx2, y2, endz2);
 
 	glEnd();
