@@ -1,3 +1,4 @@
+#include <math.h>
 #include "api.h"
 
 void drawBox(float a, float b, float c)
@@ -6,7 +7,6 @@ void drawBox(float a, float b, float c)
 	float endx = a / 2, endy = 0 - b / 2, endz = 0 - c / 2;
 
 	glBegin(GL_QUADS);
-	
 	/* front */
 	glNormal3f(0.0, 0.0, 1.0);
 	glVertex3f(startx, starty, startz);
@@ -238,5 +238,46 @@ void drawPyramidDown(float a, float b, float h)
 	glVertex3f(endx2, y2, startz2);
 
 	glEnd();
+	return;
+}
+
+#define PI 3.14159
+
+void drawEye(float radius)
+{
+	int n = 20; // детализация, её можно давать как параметр в функции, но для моей задачи это было не нужно
+	float theta1, theta2; // что-то типа временных...
+	float phi; // ... переменных для хранения данных для построения сферы.
+	float *Coords = new_Vector(0.0, 0.0, 0.0); // временная переменная для хранения координат сферы.
+
+	// Использую дисплейные списки, быстрее отображается.
+	int SphereDL = glGenLists(1);
+	glutSolidSphere(0.1, 100, 100);
+	glNewList(SphereDL, GL_COMPILE);
+	for (int j = 0; j < n / 2; j++)
+	{
+		// Вычисления (j идёт только до n / 2, потому как если по-другому, сфера будет "перекручиваться")
+		theta1 = (j  )*2.0f*PI/(float)n - PI/2.0f;
+		theta2 = (j+1)*2.0f*PI/(float)n - PI/2.0f;
+		glBegin(GL_QUAD_STRIP); // Самый быстрый способ отрисовки квадов.
+		for (int i = 0; i < n; i++)
+		{
+			phi = i*2.0f*PI/(float)(n-1);
+			Coords = new_Vector(cosf(theta2)*cosf(phi), sinf(theta2), cosf(theta2)*sinf(phi));
+			glNormal3fv(Coords); // нормаль
+			glTexCoord2f(i / (float)(n - 1), (j+1)/(float)n); // текст. координаты
+			/* вершина (умножение вектора на число(каждая компонента вектора на radius) */
+			glVertex3fv(new_Vector(
+						Coords[0] * radius, Coords[1] * radius, Coords[2] * radius));
+
+			Coords = new_Vector(cosf(theta1)*cosf(phi), sinf(theta1), cosf(theta1)*sinf(phi)); //
+			glNormal3fv(Coords);
+			glTexCoord2f(i / (float)(n - 1), (j  )/(float)n);
+			glVertex3fv(new_Vector(
+						Coords[0] * radius, Coords[1] * radius, Coords[2] * radius));
+		}
+		glEnd();
+	}
+	glEndList();
 	return;
 }

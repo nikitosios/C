@@ -13,8 +13,8 @@
 char *progdir;
 unsigned short window_width = 800, window_height = 600;
 float rotate_camera_x = 0.0, rotate_camera_y = 3.0;
-unsigned int pyramidT;
-int pyramidTW, pyramidTH;
+unsigned int pyramidT, eyeT;
+int pyramidTW, pyramidTH, eyeTW, eyeTH;
 
 unsigned int loadTextureFromFile(char* filename, int* w, int* h)
 {
@@ -26,7 +26,7 @@ unsigned int loadTextureFromFile(char* filename, int* w, int* h)
 	bytes = strlen(progdir);
 	memcpy(buffer, progdir, bytes - 1);
 	buffer[bytes - 1] = '/';
-	memcpy(buffer + bytes, filename, strlen(filename));
+	memcpy(buffer + bytes, filename, strlen(filename) + 1);
 	printf("loading texture %s\n", buffer);
 
 	pixels = SOIL_load_image(buffer, w, h, 0, SOIL_LOAD_RGB);
@@ -53,6 +53,7 @@ void initGL(void) {
 	/* glShadeModel(GL_SMOOTH); */ /* enable smooth shading */
 
 	pyramidT = loadTextureFromFile("pyramid.jpg", &pyramidTW, &pyramidTH);
+	eyeT = loadTextureFromFile("eye.png", &eyeTW, &eyeTH);
 	return;
 }
 
@@ -76,6 +77,7 @@ void drawScene(void) {
 	gluLookAt(0.0, 4.0, 5.0,
 			rotate_camera_x, rotate_camera_y, 0.0,
 			0.0, 1.0, 0.0);
+	glTranslatef(-0.5, 0.0, 2.0);
 	glTranslatef(0.0, 0.0, -8.0);
 	
 	/* add ambient light */
@@ -115,6 +117,11 @@ void drawScene(void) {
 	drawPyramidDown(1.0, 2.0, 2.0);
 	glTranslatef(0.0, 1.6, 0.0);
 	drawPyramid(1.0, 1.1);
+	glTranslatef(-0.22, 0.0, 0.0);
+	glBindTexture(GL_TEXTURE_2D, eyeT);
+	glColor3f(1.0, 1.0, 1.0);
+	drawEye(2.0);
+	glTranslatef(0.22, 0.0, 0.0);
 	glTranslatef(0.0, -1.6, 0.0);
 	glDisable(GL_TEXTURE_2D);
 	glRotatef(-angle, 0.0, 1.0, 0.0);

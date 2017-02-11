@@ -9,6 +9,7 @@
 void drawBox(float, float, float);
 void drawPyramid(float, float);
 void drawPyramidDown(float, float, float);
+void drawEye(float);
 float *multipleVectors(float *, float *);
 
 #endif
