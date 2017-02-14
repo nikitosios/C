@@ -119,6 +119,7 @@ void drawScene(void) {
 	drawPyramid(1.0, 1.1);
 	glTranslatef(-0.22, 0.0, 0.0);
 	glBindTexture(GL_TEXTURE_2D, eyeT);
+	glDisable(GL_TEXTURE_2D);
 	glColor3f(1.0, 0.0, 0.0);
 	drawEye(2.0);
 	glTranslatef(0.22, 0.0, 0.0);

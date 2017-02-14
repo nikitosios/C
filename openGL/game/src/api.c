@@ -261,7 +261,16 @@ void drawPyramidDown(float a, float b, float h)
 
 void drawEye(float radius)
 {
-	drawSquare(0.5, 0.5);
+	float startx = 0 - radius / 2, starty = 0 - radius / 2, startz = radius / 3;
+	float endx = radius / 2, endy = radius / 2, endz = 0 - radius / 3;
+
+	glBegin(GL_QUADS);
+
+	glNormal3f(0.0, 0.0, 1.0);
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f();
+
+	glEnd();
 
 	return;
 }
