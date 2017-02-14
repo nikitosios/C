@@ -1,6 +1,22 @@
 #include <math.h>
 #include "api.h"
 
+void drawSquare(float a, float b)
+{
+	float startx = 0 - a / 2, starty = b / 2;
+	float endx = a / 2, endy = 0 - b / 2;
+
+	glBegin(GL_QUADS);
+
+	glNormal3f(0.0, 0.0, 1.0);
+	glVertex3f(startx, starty, 0);
+	glVertex3f(endx, starty, 0);
+	glVertex3f(endx, endy, 0);
+	glVertex3f(startx, endy, 0);
+
+	glEnd();
+}
+
 void drawBox(float a, float b, float c)
 {
 	float startx = 0 - a / 2, starty = b / 2, startz = c / 2;
@@ -13,42 +29,42 @@ void drawBox(float a, float b, float c)
 	glVertex3f(endx, starty, startz);
 	glVertex3f(endx, endy, startz);
 	glVertex3f(startx, endy, startz);
-	
+
 	/* back */
 	glNormal3f(0.0, 0.0, -1.0);
 	glVertex3f(startx, starty, endz);
 	glVertex3f(endx, starty, endz);
 	glVertex3f(endx, endy, endz);
 	glVertex3f(startx, endy, endz);
-	
+
 	/* left */
 	glNormal3f(-1.0, 0.0, 0.0);
 	glVertex3f(startx, starty, startz);
 	glVertex3f(startx, starty, endz);
 	glVertex3f(startx, endy, endz);
 	glVertex3f(startx, endy, startz);
-	
+
 	/* right */
 	glNormal3f(1.0, 0.0, 0.0);
 	glVertex3f(endx, starty, startz);
 	glVertex3f(endx, starty, endz);
 	glVertex3f(endx, endy, endz);
 	glVertex3f(endx, endy, startz);
-	
+
 	/* up */
 	glNormal3f(0.0, 1.0, 0.0);
 	glVertex3f(startx, starty, endz);
 	glVertex3f(endx, starty, endz);
 	glVertex3f(endx, starty, startz);
 	glVertex3f(startx, starty, startz);
-	
+
 	/* down */
 	glNormal3f(0.0, -1.0, 0.0);
 	glVertex3f(startx, endy, endz);
 	glVertex3f(endx, endy, endz);
 	glVertex3f(endx, endy, startz);
 	glVertex3f(startx, endy, startz);
-	
+
 	glEnd();
 }
 
@@ -245,39 +261,7 @@ void drawPyramidDown(float a, float b, float h)
 
 void drawEye(float radius)
 {
-	int n = 20; // детализация, её можно давать как параметр в функции, но для моей задачи это было не нужно
-	float theta1, theta2; // что-то типа временных...
-	float phi; // ... переменных для хранения данных для построения сферы.
-	float *Coords = new_Vector(0.0, 0.0, 0.0); // временная переменная для хранения координат сферы.
+	drawSquare(0.5, 0.5);
 
-	// Использую дисплейные списки, быстрее отображается.
-	int SphereDL = glGenLists(1);
-	glutSolidSphere(0.1, 100, 100);
-	glNewList(SphereDL, GL_COMPILE);
-	for (int j = 0; j < n / 2; j++)
-	{
-		// Вычисления (j идёт только до n / 2, потому как если по-другому, сфера будет "перекручиваться")
-		theta1 = (j  )*2.0f*PI/(float)n - PI/2.0f;
-		theta2 = (j+1)*2.0f*PI/(float)n - PI/2.0f;
-		glBegin(GL_QUAD_STRIP); // Самый быстрый способ отрисовки квадов.
-		for (int i = 0; i < n; i++)
-		{
-			phi = i*2.0f*PI/(float)(n-1);
-			Coords = new_Vector(cosf(theta2)*cosf(phi), sinf(theta2), cosf(theta2)*sinf(phi));
-			glNormal3fv(Coords); // нормаль
-			glTexCoord2f(i / (float)(n - 1), (j+1)/(float)n); // текст. координаты
-			/* вершина (умножение вектора на число(каждая компонента вектора на radius) */
-			glVertex3fv(new_Vector(
-						Coords[0] * radius, Coords[1] * radius, Coords[2] * radius));
-
-			Coords = new_Vector(cosf(theta1)*cosf(phi), sinf(theta1), cosf(theta1)*sinf(phi)); //
-			glNormal3fv(Coords);
-			glTexCoord2f(i / (float)(n - 1), (j  )/(float)n);
-			glVertex3fv(new_Vector(
-						Coords[0] * radius, Coords[1] * radius, Coords[2] * radius));
-		}
-		glEnd();
-	}
-	glEndList();
 	return;
 }
