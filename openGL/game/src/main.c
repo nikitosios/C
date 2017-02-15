@@ -121,7 +121,7 @@ void drawScene(void) {
 	glBindTexture(GL_TEXTURE_2D, eyeT);
 	glDisable(GL_TEXTURE_2D);
 	glColor3f(1.0, 0.0, 0.0);
-	drawEye(2.0);
+	drawEye(2.0, pyramidT);
 	glTranslatef(0.22, 0.0, 0.0);
 	glTranslatef(0.0, -1.6, 0.0);
 	glDisable(GL_TEXTURE_2D);

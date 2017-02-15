@@ -259,16 +259,47 @@ void drawPyramidDown(float a, float b, float h)
 
 #define PI 3.14159
 
-void drawEye(float radius)
+void drawEye(float radius, unsigned int tex)
 {
-	float startx = 0 - radius / 2, starty = 0 - radius / 2, startz = radius / 3;
-	float endx = radius / 2, endy = radius / 2, endz = 0 - radius / 3;
+	float startx = 0 - radius / 2 + radius / 5;
+	float starty = 0 - radius / 2 + radius / 5, startz = radius / 3;
+	float endx = radius / 2 - radius / 5;
+	float endy = radius / 2 - radius / 5, endz;
 
+	glShadeModel(GL_SMOOTH);
 	glBegin(GL_QUADS);
 
 	glNormal3f(0.0, 0.0, 1.0);
 	glTexCoord2f(0.0, 0.0);
-	glVertex3f();
+	glVertex3f(startx, starty, startz);
+	glTexCoord2f(0.0, 1.0);
+	glVertex3f(startx, endy, startz);
+	glTexCoord2f(1.0, 1.0);
+	glVertex3f(endx, endy, startz);
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(endx, starty, startz);
+
+	glEnd();
+	startx = 0 - radius / 2 + radius / 5, starty = endy;
+	endx = radius / 2 - radius / 5, endy = radius / 2, endz = 0;
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glBegin(GL_POLYGON);
+
+	glNormal3fv(multipleVectors(
+				new_Vector(endx - startx, 0, 0),
+				new_Vector(- radius / 5 * 3, endy - starty, endz - startz)));
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(startx, starty, startz);
+	glTexCoord2f(0.2, 0.0);
+	glVertex3f(endx, starty, startz);
+	glTexCoord2f(0.2, 0.2);
+	glVertex3f(endx + radius / 5 * 3, endy, endz);
+	glTexCoord2f(0.0, 0.2);
+	glVertex3f(startx - radius / 5 * 3, endy, endz);
+
+	glEnd();
+	glBegin(GL_POLYGON);
+
 
 	glEnd();
 
