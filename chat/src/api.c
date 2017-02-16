@@ -1,8 +1,8 @@
 #include "api.h"
 
-void *output_packages(void *parameters)
+void* output_packages(void* parameters)
 {
-	int sockt = *(int *) parameters;
+	int sockt = *(int*)parameters;
 	char message[2000];
 
 	while (1) {
@@ -39,16 +39,21 @@ static void *input_read (void *socket)
 }
 
 /* this function will handle connection for each client */
-void *connection_handler (void *socket_desc)
+void* connection_handler (void* socket_desc)
 {
 	const char disconnect_str[] = { '\a', 0 };
 
-	int sock = *(int *)socket_desc;
-	int *new_sock = malloc(1);
+	int sock = *(int*)socket_desc;
+	int* new_sock = malloc(sizeof(int));
 	*new_sock = sock;
 	int read_size;
 	char client_message[2000], nickname[21];
-	pthread_t input_packages;
+
+	if (locked)
+	{
+		puts("I'm busy.");
+		return 0;
+	}
 
 	if (recv(sock, nickname, 21, 0) > 0)
 		printf("%s connected.\n", nickname);
@@ -68,6 +73,7 @@ void *connection_handler (void *socket_desc)
 	}
 
 	printf("%s disconnected.\n", nickname);
+	locked == 0;
 
 	//Free the socket pointer
 	free(socket_desc);

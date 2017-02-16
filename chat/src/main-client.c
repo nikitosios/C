@@ -1,6 +1,6 @@
 #include "api.h"
 
-const char *stdport = "31185";
+const char *stdport = "31285";
 
 int main_client(int argc, char *argv[])
 {
@@ -10,6 +10,31 @@ int main_client(int argc, char *argv[])
     char server_ip_port[23], c;
 	char server_ip[17], server_port[6];
 	int server_p = 0;
+	char myNickname[21], ch;
+
+	FILE* nicknameFile = fopen("nickname.txt", "r");
+	if (nicknameFile == NULL)
+	{
+		puts("Введите Ваш никнейм (до 20 символов английскими или до 10 русскими):");
+		for (int i = 0; i < 20; ++i)
+		{
+			ch = getchar();
+			if (ch == '\n' && i > 0)
+			{
+				myNickname[i] = '\0';
+				break;
+			} else {
+				myNickname[i] = ch;
+			}
+		}
+
+		nicknameFile = fopen("nickname.txt", "w");
+		for (int i = 0; i < 21; ++i) fputc(myNickname[i], nicknameFile);
+		fclose(nicknameFile);
+	} else {
+		for (int i = 0; i < 21; ++i) myNickname[i] = fgetc(nicknameFile);
+		fclose(nicknameFile);
+	}
 
 	//Read an IP:port of server
 	int i;
@@ -60,6 +85,12 @@ int main_client(int argc, char *argv[])
 		return 1;
 	}
 	puts("Connected");
+
+	if (send(sock, myNickname, 21, 0) < 0)
+	{
+		puts("Can't send data.");
+		return 1;
+	}
 
 	//output packages
 	pthread_t oPacks;
