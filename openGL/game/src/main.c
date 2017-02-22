@@ -5,10 +5,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include <GL/glut.h>
 #include "api.h"
 
 #define MOUSE_MOTION_STEP 0.2
+#define WINDOW_TITLE "MLG game by Nikitosios"
 
 char *progdir;
 unsigned short window_width = 800, window_height = 600;
@@ -119,9 +122,8 @@ void drawScene(void) {
 	drawPyramid(1.0, 1.1);
 	glTranslatef(-0.22, 0.0, 0.0);
 	glBindTexture(GL_TEXTURE_2D, eyeT);
-	glDisable(GL_TEXTURE_2D);
-	glColor3f(1.0, 0.0, 0.0);
-	drawEye(2.0, pyramidT);
+	glEnable(GL_TEXTURE_2D);
+	drawEye(1, eyeT);
 	glTranslatef(0.22, 0.0, 0.0);
 	glTranslatef(0.0, -1.6, 0.0);
 	glDisable(GL_TEXTURE_2D);
@@ -174,7 +176,7 @@ int main(int argc, char **argv) {
 	glutInitWindowSize(window_width, window_height);
 	
 	/* create the window */
-	glutCreateWindow("Lighting - videotutorialsrock.com");
+	glutCreateWindow(WINDOW_TITLE);
 	initGL();
 	
 	/* set handler functions */
