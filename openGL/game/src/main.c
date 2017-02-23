@@ -8,16 +8,18 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#include <SOIL/SOIL.h>
 #include "api.h"
 
-#define MOUSE_MOTION_STEP 0.2
+#define MOUSE_MOTION_STEP 0.08
 #define WINDOW_TITLE "MLG game by Nikitosios"
 
 char *progdir;
 unsigned short window_width = 800, window_height = 600;
-float rotate_camera_x = 0.0, rotate_camera_y = 3.0;
+float rotate_camera_x = 2.0, rotate_camera_y = 3.0;
 unsigned int pyramidT, eyeT;
 int pyramidTW, pyramidTH, eyeTW, eyeTH;
+float angle = 0.0;
 
 unsigned int loadTextureFromFile(char* filename, int* w, int* h)
 {
@@ -69,18 +71,16 @@ void handleResize(int w, int h) {
 	return;
 }
 
-float angle = 0.0;
-
 /* draws the 3D scene */
 void drawScene(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
-	gluLookAt(0.0, 4.0, 5.0,
+	gluLookAt(1.0, 4.0, 0.8,
 			rotate_camera_x, rotate_camera_y, 0.0,
 			0.0, 1.0, 0.0);
-	glTranslatef(-0.5, 0.0, 2.0);
+	glTranslatef(-0.5, 0.0, 7.0);
 	glTranslatef(0.0, 0.0, -8.0);
 	
 	/* add ambient light */
@@ -120,10 +120,10 @@ void drawScene(void) {
 	drawPyramidDown(1.0, 2.0, 2.0);
 	glTranslatef(0.0, 1.6, 0.0);
 	drawPyramid(1.0, 1.1);
-	glTranslatef(-0.22, 0.0, 0.0);
+	glTranslatef(0.0, 0.0, 0.18);
 	glBindTexture(GL_TEXTURE_2D, eyeT);
 	glEnable(GL_TEXTURE_2D);
-	drawEye(1, eyeT);
+	drawEye(0.08, eyeT);
 	glTranslatef(0.22, 0.0, 0.0);
 	glTranslatef(0.0, -1.6, 0.0);
 	glDisable(GL_TEXTURE_2D);
@@ -153,7 +153,7 @@ void passiveMMotion(int x, int y)
 }
 
 void update(int value) {
-	angle += 1.5;
+	/* angle += 1.5; */
 	if (angle > 360)
 		angle -= 360;
 	

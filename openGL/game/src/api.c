@@ -261,7 +261,8 @@ void drawEye(float radius, unsigned int tex)
 {
 	GLUquadricObj* quadObj; 
 
-	glRotatef(-90.0, 1.0, 1.0, 0.0);
+	glRotatef(180, 0.0, 0.0, -1.0);
+	glRotatef(-25, 1.0, 0.0, 0.0);
 	glScalef(1.5, 1.1, 1.0);
 
 	quadObj = gluNewQuadric(); 

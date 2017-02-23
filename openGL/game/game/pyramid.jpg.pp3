@@ -12,8 +12,8 @@ Auto=false
 Clip=0.02
 Compensation=0
 Brightness=0
-Contrast=0
-Saturation=0
+Contrast=-11
+Saturation=-85
 Black=0
 HighlightCompr=0
 HighlightComprThreshold=33
@@ -29,7 +29,7 @@ Method=Blend
 
 [Channel Mixer]
 Red=-80;0;-22;
-Green=0;100;0;
+Green=71;45;56;
 Blue=0;0;100;
 
 [Black & White]
@@ -264,7 +264,7 @@ Width=900
 Height=900
 
 [Color Management]
-InputProfile=(camera)
+InputProfile=(embedded)
 ToneCurve=false
 BlendCMSMatrix=false
 DCPIlluminant=0
@@ -324,7 +324,7 @@ Autosat=true
 OpacityCurve=1;0;0.29999999999999999;0.34999999999999998;0;0.25;0.80000000000000004;0.34999999999999998;0.34999999999999998;0.69999999999999996;0.80000000000000004;0.34999999999999998;0.34999999999999998;1;0.29999999999999999;0;0;
 ColorCurve=1;0.050000000000000003;0.62;0.25;0.25;0.58499999999999996;0.11;0.25;0.25;
 SatProtectionThreshold=0
-SaturatedOpacity=1
+SaturatedOpacity=0
 Strength=50
 HighlightsColorSaturation=60;80;
 ShadowsColorSaturation=80;208;
@@ -378,5 +378,4 @@ Country=Egypt;
 DateCreated=20100227;
 Keywords=pyramid;wall;Khufu;Great;Egypt;Cheops;stone;side;Giza;block;architecture;brick;ancient;antique;old;pyramide;stones;sunny;bricks;big;historic;texture;
 Province=Greater Cairo;
-SupplementalCategories=
 Title=Pyramide stone blocks;
