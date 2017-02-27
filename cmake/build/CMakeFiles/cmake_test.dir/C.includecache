@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/nikitosios/C/cmake/src/main.c
+stdio.h
+-
+stdlib.h
+-
+math.h
+-
+GL/glut.h
+-
+vars.h
+/home/nikitosios/C/cmake/src/vars.h
+
+/home/nikitosios/C/cmake/src/vars.h
+
