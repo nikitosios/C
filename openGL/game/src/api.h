@@ -6,10 +6,15 @@
 
 #define drawCube(a) drawBox(a, a, a)
 
+extern unsigned int eyeT;
+extern unsigned int pyramidT;
+extern float angle;
+
 void drawBox(float, float, float);
 void drawPyramid(float, float);
 void drawPyramidDown(float, float, float);
 void drawEye(float, unsigned int);
+void drawMLGPyramid(void);
 float *multipleVectors(float *, float *);
 
 #endif

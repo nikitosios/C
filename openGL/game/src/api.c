@@ -275,3 +275,26 @@ void drawEye(float radius, unsigned int tex)
 
 	return;
 }
+
+void drawMLGPyramid (void)
+{
+	glTranslatef(3.0, 1.1, 0.0);
+	glRotatef(angle, 0.0, 1.0, 0.0);
+	glColor3f(0.6, 0.6, 0.6);
+	glBindTexture(GL_TEXTURE_2D, pyramidT);
+	glEnable(GL_TEXTURE_2D);
+	drawPyramidDown(1.0, 2.0, 2.0);
+	glTranslatef(0.0, 1.6, 0.0);
+	drawPyramid(1.0, 1.1);
+	glTranslatef(0.0, 0.0, 0.18);
+	glBindTexture(GL_TEXTURE_2D, eyeT);
+	glEnable(GL_TEXTURE_2D);
+	drawEye(0.08, eyeT);
+	glTranslatef(0.22, 0.0, 0.0);
+	glTranslatef(0.0, -1.6, 0.0);
+	glDisable(GL_TEXTURE_2D);
+	glRotatef(-angle, 0.0, 1.0, 0.0);
+	glTranslatef(-3.0, -1.1, 0.0);
+
+	return;
+}
