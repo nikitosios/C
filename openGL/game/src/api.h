@@ -9,12 +9,15 @@
 extern unsigned int eyeT;
 extern unsigned int pyramidT;
 extern float angle;
+extern char* progdir;
 
 void drawBox(float, float, float);
 void drawPyramid(float, float);
 void drawPyramidDown(float, float, float);
 void drawEye(float, unsigned int);
 void drawMLGPyramid(void);
+void drawPlayer(void);
 float *multipleVectors(float *, float *);
+unsigned int loadTextureFromFile(char*, int*, int*);
 
 #endif

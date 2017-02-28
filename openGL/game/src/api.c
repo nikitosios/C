@@ -1,5 +1,34 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include <math.h>
 #include "api.h"
+
+unsigned int loadTextureFromFile(char* filename, int* w, int* h)
+{
+	unsigned int textureID;
+	unsigned char *pixels;
+	char buffer[256];
+	char bytes;
+   
+	bytes = strlen(progdir);
+	memcpy(buffer, progdir, bytes - 1);
+	buffer[bytes - 1] = '/';
+	memcpy(buffer + bytes, filename, strlen(filename) + 1);
+	printf("loading texture %s\n", buffer);
+
+	pixels = SOIL_load_image(buffer, w, h, 0, SOIL_LOAD_RGB);
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, *w, *h, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+	/* glGenerateMipmap(GL_TEXTURE_2D); */
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	SOIL_free_image_data(pixels);
+	return textureID;
+}
 
 void drawSquare(float a, float b)
 {
@@ -296,5 +325,17 @@ void drawMLGPyramid (void)
 	glRotatef(-angle, 0.0, 1.0, 0.0);
 	glTranslatef(-3.0, -1.1, 0.0);
 
+	return;
+}
+
+void drawPlayer (void)
+{
+	GLUquadric* quadObj;
+
+	glScalef(1.0, 2.0, 1.0);
+	glTranslatef(0.0, -0.8, 0.0);
+	quadObj = gluNewQuadric();
+	gluSphere(quadObj, 1.0, 32, 32);
+	gluDeleteQuadric(quadObj);
 	return;
 }
