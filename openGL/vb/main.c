@@ -50,7 +50,12 @@ int main (void)
 {
 	/* initialize openGL */
 	glfwInit();
-	glfwDefaultWindowHints();
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	
 	GLFWwindow* window = glfwCreateWindow(300, 300, "glBegin/End for dweebs", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	glewInit();
@@ -86,8 +91,6 @@ int main (void)
 	/* main loop */
 	while (!glfwWindowShouldClose(window))
 	{
-		/* set the triangle color to red */
-		glColor3f(1.0, 0.0, 0.0);
 		/* draw triangle */
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, (void*)0);
 
