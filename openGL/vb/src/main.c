@@ -5,13 +5,15 @@
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
 #include "constants.h"
+#include "myvectors.h"
 #include "shaders.h"
-#include "geometry.h"
+#include "mygeometry.h"
+
 
 int main (void)
 {
 	glfwInit();
-	
+
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -24,22 +26,22 @@ int main (void)
 	glewInit();
 
 	GLuint vertShader;
-	prepareShader(&vertShader, VERTEX_SHADER_NAME, GL_VERTEX_SHADER);
+	prepareShader(&vertShader, "shaders/vertex.vsh", GL_VERTEX_SHADER);
 
 	GLuint fragShader;
-	prepareShader(&fragShader, FRAGMENT_SHADER_NAME, GL_FRAGMENT_SHADER);
+	prepareShader(&fragShader, "shaders/fragment.fsh",
+			GL_FRAGMENT_SHADER);
 
 	GLuint shaders[] = {vertShader, fragShader};
 	GLuint programD;
 	prepareProgram(&programD, shaders, 2);
 
 	GLuint vbo, vao;
-	prepareTriangle(&vbo, &vao);
+	prepareTriangleBuffers(&vbo, &vao);
 
 	while (!glfwWindowShouldClose(window))
 	{
 		glUseProgram(programD);
-
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
@@ -49,6 +51,7 @@ int main (void)
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;

@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-Wall
 LDFLAGS=-lGL -lGLEW -lglfw
 EXE=vb
-SRCS=main.c
+SRCS=src/*.c*
 
 all: $(EXE)
 
