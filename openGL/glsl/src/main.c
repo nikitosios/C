@@ -48,6 +48,7 @@ int main (void)
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;

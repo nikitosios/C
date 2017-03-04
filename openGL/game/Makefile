@@ -1,19 +1,14 @@
 CC=gcc
 CFLAGS=-Wall
-LDFLAGS=-lglut -lGL -lGLU -lSOIL -lm
-PROGDIR=game
-PROG=game
-SRCS=src/*.c
-OBJS=*.o
+LDFLAGS=-lm -lGL -lGLEW -lglfw
+SRCS=src/*.c*
+PROJDIR=game
+EXE=game
 
-all: clean $(PROG)
+all: clean $(EXE)
 
-$(PROG): $(OBJS)
-	@mkdir -p $(PROGDIR)
-	@$(CC) $(CFLAGS) -o $(PROGDIR)/$(PROG) $(OBJS) $(LDFLAGS)
-
-$(OBJS): $(SRCS)
-	@$(CC) $(CFLAGS) -c $(SRCS)
+$(EXE): $(SRCS)
+	$(CC) $(CFLAGS) -o $(PROJDIR)/$(EXE) $(SRCS) $(LDFLAGS)
 
 clean:
-	@rm -f $(PROGDIR)/$(PROG) *.o
+	rm -rf $(PROJDIR)/$(EXE)
