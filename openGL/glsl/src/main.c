@@ -43,7 +43,7 @@ int main (void)
 		prepareTriangle(programD);
 		glUseProgram(programD);
 		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
