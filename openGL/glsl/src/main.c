@@ -11,7 +11,7 @@
 int main (void)
 {
 	glfwInit();
-	
+
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -34,17 +34,16 @@ int main (void)
 	prepareProgram(&programD, shaders, 2);
 
 	GLuint vbo, vao;
-	prepareTriangle(&vbo, &vao);
+	prepareTriangleBuffers(&vbo, &vao);
 
 	while (!glfwWindowShouldClose(window))
 	{
-		glUseProgram(programD);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDisableVertexAttribArray(0);
+		prepareTriangle(programD);
+		glUseProgram(programD);
+		glBindVertexArray(vao);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

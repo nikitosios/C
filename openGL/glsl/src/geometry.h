@@ -1,6 +1,7 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
-void prepareTriangle (unsigned int *, unsigned int *);
+void prepareTriangleBuffers (unsigned int *, unsigned int *);
+void prepareTriangle (unsigned int);
 
 #endif
