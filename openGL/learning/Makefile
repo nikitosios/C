@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall
+CFLAGS=
 LDFLAGS=-lm -lGL -lGLEW -lglfw
 EXE=learning_opengl
 SRCS=src/*.c*

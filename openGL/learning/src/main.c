@@ -8,7 +8,6 @@
 #undef MATH_3D_IMPLEMENTATION
 #include "constants.h"
 #include "shaders.h"
-#include "geometry.h"
 
 int main (void)
 {
@@ -36,52 +35,93 @@ int main (void)
 	GLuint programD;
 	prepareProgram(&programD, shaders, 2);
 
-	GLuint vbo, vao;
-	prepareTriangleBuffers(&vbo, &vao);
+	mat4_t projectionMatrix, viewMatrix, modelMatrix, MVP;
+	mat4_t translationMatrix, rotationMatrix, scalingMatrix;
 
-	mat4_t myMatrix = m4_translation(vec3(10.0, 0.0, 0.0));
-	vec3_t myVector = vec3(10.0, 10.0, 10.0);
-	vec3_t translatedVector = m4_mul_pos(myMatrix, myVector);
-
-	mat4_t identityMatrix = m4_identity();
-	vec3_t someVector = vec3(1.0, 2.0, 3.0);
-	vec3_t anotherVector = m4_mul_dir(identityMatrix, someVector);
-
-	mat4_t scalingMatrix = m4_scaling(vec3(2.0, 2.0, 2.0));
-	vec3_t xVector = vec3(5.0, 6.0, 7.0);
-	vec3_t scaledXVector = m4_mul_pos(scalingMatrix, xVector);
-
-	vec3_t myRotationAxis = vec3(2.0, 3.0, 4.0);
-	mat4_t myRotatedAxis = m4_rotation(45.0, myRotationAxis);
-
-	vec3_t originalVector = vec3(1.0, 2.0, 3.0);
-	mat4_t translationMatrix = m4_translation(vec3(10.0, 0.0, 0.0));
-	mat4_t rotationMatrix = m4_rotation(15.0, myRotationAxis);
-	mat4_t scaleMatrix = m4_scaling(vec3(1.5, 1.5, 2.0));
-	/* далее: сначала выполняется масштабирование, потом поворот,
-	 * и только потом выполняется перенос */
-	vec3_t transformedVector1 = m4_mul_pos(translationMatrix,
-			m4_mul_pos(rotationMatrix, m4_mul_pos(scaleMatrix, originalVector)));
-	/* вариант получше (порядок все еще важен): */
-	mat4_t myModelMatrix = m4_mul(translationMatrix, m4_mul(rotationMatrix, scaleMatrix));
-	m4_print(myModelMatrix);
-	vec3_t transformedVector2 = m4_mul_pos(myModelMatrix, originalVector);
-
-	mat4_t projectionMatrix = m4_perspective(45.0f,
-			(float) WINDOW_WIDTH / (float) WINDOW_HEIGHT, NEAR_VIEW_DISTANCE, FAR_VIEW_DISTANCE);
-	mat4_t viewMatrix = m4_look_at(vec3(4.0, 3.0, 3.0), vec3(0.0, 0.0, 0.0),
-			vec3(0.0, 1.0, 0.0));
-	mat4_t modelMatrix = m4_mul(translationMatrix, m4_mul(rotationMatrix, scaleMatrix));
-	mat4_t MVP = m4_mul(projectionMatrix, m4_mul(viewMatrix, modelMatrix));
+	static const GLfloat cube_data_without_colors[] = {
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f, 1.0f,
+		-1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, 1.0f, -1.0f,
+		1.0f, -1.0f, 1.0f,
+		-1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f, 
+		1.0f, 1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, -1.0f,
+		1.0f, -1.0f, 1.0f,
+		-1.0f, -1.0f, 1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, -1.0f,
+		1.0f, -1.0f, 1.0f,
+		-1.0f, -1.0f, 1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, 1.0f, 1.0f,
+		-1.0f, -1.0f, 1.0f,
+		1.0f, -1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, 1.0f, -1.0f,
+		1.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, -1.0f,
+		-1.0f, 1.0f, -1.0f,
+		-1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, 1.0f
+	};
 
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		prepareTriangle(programD);
-		glUseProgram(programD);
+		projectionMatrix = m4_perspective(45.0f,
+				(float) WINDOW_WIDTH / (float) WINDOW_HEIGHT, NEAR_VIEW_DISTANCE, FAR_VIEW_DISTANCE);
+		viewMatrix = m4_look_at(vec3(0.0f, 0.0f, 10.0f), vec3(0.0f, 0.0f, 0.0f),
+				vec3(0.0, 1.0, 0.0));
+		translationMatrix = m4_translation(vec3(0.0f, 0.0f, 3.0f));
+		rotationMatrix = m4_rotation(45.0f, vec3(0.0, 1.0, 0.0));
+		scalingMatrix = m4_scaling(vec3(2.0, 2.0, 2.0));
+		mat4_t modelMatrix = m4_mul(translationMatrix, m4_mul(rotationMatrix, scalingMatrix));
+		mat4_t MVP = m4_mul(projectionMatrix, m4_mul(viewMatrix, modelMatrix));
+
+		GLuint vao;
+		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		GLuint vbo;
+		glGenBuffers(1, &vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof cube_data_without_colors,
+				cube_data_without_colors, GL_STATIC_DRAW);
+
+		GLint posLoc, posCol, posMVP;
+		GLint vertexSize = 3 * sizeof(float);
+
+		posLoc = glGetAttribLocation(programD, "position");
+		glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE,
+				vertexSize, (void*)0);
+		glEnableVertexAttribArray(posLoc);
+
+		posCol = glGetUniformLocation(programD, "color");
+		glUniform3f(posCol, 1.0f, 0.0f, 0.0f);
+
+		posMVP = glGetUniformLocation(programD, "MVP");
+		glUniformMatrix4fv(posMVP, 1, GL_FALSE, (const GLfloat *) &MVP);
+
+		glUseProgram(programD);
+
+		glBindVertexArray(vao);
+		glDrawArrays(GL_TRIANGLES, 0, 12*3);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
