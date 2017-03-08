@@ -5,11 +5,8 @@
 #include <GLFW/glfw3.h>
 #define MATH_3D_IMPLEMENTATION
 #include "math_3d.h"
-#undef MATH_3D_IMPLEMENTATION
 #include "constants.h"
-#include "shaders.h"
-#include "render.h"
-#include "timer.h"
+#include "utils.h"
 
 mat4_t projectionMatrix, viewMatrix, modelMatrix, MVP;
 mat4_t translationMatrix, rotationMatrix, scalingMatrix;

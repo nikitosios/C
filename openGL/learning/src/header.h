@@ -8,7 +8,7 @@
 #include <GLFW/glfw3.h>
 #include "math_3d.h"
 #include "constants.h"
-#include "shaders.h"
+#include "utils.h"
 
 extern float angle;
 extern double time, lastTime;

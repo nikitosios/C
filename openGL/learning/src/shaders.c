@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <GL/glew.h>
 
-char * loadShaderAsString (char * filename)
+char * loadShaderAsString (const char * filename)
 {
 	char * shader, *shaderbak;
 	FILE * shaderfile;
