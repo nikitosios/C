@@ -10,6 +10,7 @@
 #include "constants.h"
 #include "shaders.h"
 
+extern float angle;
 extern GLuint programD;
 extern GLFWwindow * window;
 extern mat4_t projectionMatrix, viewMatrix, modelMatrix, MVP;

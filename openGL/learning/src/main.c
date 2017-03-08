@@ -13,10 +13,23 @@
 mat4_t projectionMatrix, viewMatrix, modelMatrix, MVP;
 mat4_t translationMatrix, rotationMatrix, scalingMatrix;
 GLuint programD;
+float angle;
 GLFWwindow * window;
+double lastTime, time;
+
+void timer (void)
+{
+	angle += ANGLE_STEP;
+	if (angle >= 360.0f)
+		angle = 0.0f;
+	lastTime = time;
+	return;
+}
 
 int main (void)
 {
+	angle = 0.0f;
+
 	glfwInit();
 
 	glfwWindowHint(GLFW_SAMPLES, 4);
@@ -25,7 +38,7 @@ int main (void)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT,
+	window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT,
 			WINDOW_TITLE, NULL, NULL);
 	glfwMakeContextCurrent(window);
 	glewExperimental = GL_TRUE;
@@ -40,8 +53,12 @@ int main (void)
 	GLuint shaders[] = {vertShader, fragShader};
 	prepareProgram(&programD, shaders, 2);
 
+	lastTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window))
 	{
+		time = glfwGetTime();
+		if (time - lastTime >= DELTA_TIME)
+			timer();
 		render();
 	}
 

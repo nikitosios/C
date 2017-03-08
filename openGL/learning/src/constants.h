@@ -10,5 +10,7 @@
 
 #define NEAR_VIEW_DISTANCE 0.1f
 #define FAR_VIEW_DISTANCE 100.0f
+#define DELTA_TIME 0.1f
+#define ANGLE_STEP 0.1f
 
 #endif
