@@ -11,6 +11,7 @@
 #include "shaders.h"
 
 extern float angle;
+extern double time, lastTime;
 extern GLuint programD;
 extern GLFWwindow * window;
 extern mat4_t projectionMatrix, viewMatrix, modelMatrix, MVP;

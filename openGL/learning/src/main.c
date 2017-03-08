@@ -9,6 +9,7 @@
 #include "constants.h"
 #include "shaders.h"
 #include "render.h"
+#include "timer.h"
 
 mat4_t projectionMatrix, viewMatrix, modelMatrix, MVP;
 mat4_t translationMatrix, rotationMatrix, scalingMatrix;
@@ -16,15 +17,6 @@ GLuint programD;
 float angle;
 GLFWwindow * window;
 double lastTime, time;
-
-void timer (void)
-{
-	angle += ANGLE_STEP;
-	if (angle >= 360.0f)
-		angle = 0.0f;
-	lastTime = time;
-	return;
-}
 
 int main (void)
 {
@@ -52,6 +44,9 @@ int main (void)
 
 	GLuint shaders[] = {vertShader, fragShader};
 	prepareProgram(&programD, shaders, 2);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
 	lastTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window))
