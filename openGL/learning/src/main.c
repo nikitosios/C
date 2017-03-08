@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #define MATH_3D_IMPLEMENTATION
@@ -51,6 +52,7 @@ int main (void)
 		time = glfwGetTime();
 		if (time - lastTime >= DELTA_TIME)
 			timer();
+
 		render();
 	}
 
