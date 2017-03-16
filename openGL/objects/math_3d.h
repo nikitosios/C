@@ -96,6 +96,9 @@ v1.0  2016-02-15  Initial release
 // So you can just upload the vectors into shaders as they are.
 //
 
+float deg_to_rad (float deg);
+float rad_to_deg (float rad);
+
 typedef struct { float x, y, z; } vec3_t;
 static inline vec3_t vec3(float x, float y, float z)        { return (vec3_t){ x, y, z }; }
 
@@ -341,6 +344,7 @@ static inline mat4_t m4_mul(mat4_t a, mat4_t b) {
 
 #endif // MATH_3D_HEADER
 
+#define MATH_3D_IMPLEMENTATION
 #ifdef MATH_3D_IMPLEMENTATION
 
 /**
@@ -621,6 +625,16 @@ void m4_fprintp(FILE* stream, mat4_t matrix, int width, int precision) {
 				w, p, m.m[0][r], w, p, m.m[1][r], w, p, m.m[2][r], w, p, m.m[3][r]
 			   );
 	}
+}
+
+float deg_to_rad (float deg)
+{
+	return deg * M_PI / 180.0f;
+}
+
+float rad_to_deg (float rad)
+{
+	return rad * 180.0f / M_PI;
 }
 
 #endif

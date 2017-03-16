@@ -1,10 +1,12 @@
+#ifndef SHADERS_H
+#define SHADERS_H
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <GL/glew.h>
-#include <GL/gl.h>
 
-char * loadShaderAsString (char * filename)
+char * loadShaderAsString (const char * filename)
 {
 	char * shader, *shaderbak;
 	FILE * shaderfile;
@@ -20,7 +22,7 @@ char * loadShaderAsString (char * filename)
 	shaderfilesize = ftell(shaderfile);
 	fseek(shaderfile, 0, SEEK_SET);
 
-	shader = malloc(shaderfilesize);
+	shader = (char*) malloc(shaderfilesize);
 	for (int i = 0; i < shaderfilesize; ++i)
 		shader[i] = fgetc(shaderfile);
 
@@ -28,7 +30,7 @@ char * loadShaderAsString (char * filename)
 		shader[shaderfilesize - 1] = '\0';
 	else if (shader[shaderfilesize - 1] != '\0')
 	{
-		shaderbak = malloc(shaderfilesize + 1);
+		shaderbak = (char*) malloc(shaderfilesize + 1);
 		memcpy(shaderbak, shader, shaderfilesize);
 		shaderbak[shaderfilesize] = '\0';
 		return shaderbak;
@@ -38,7 +40,7 @@ char * loadShaderAsString (char * filename)
 	return shader;
 }
 
-void prepareShader (unsigned int * shaderD, char * shaderfilename, int shaderType)
+void prepareShader (unsigned int * shaderD, const char * shaderfilename, int shaderType)
 {	
 	*shaderD = glCreateShader(shaderType);
 	if (*shaderD == 0)
@@ -47,7 +49,7 @@ void prepareShader (unsigned int * shaderD, char * shaderfilename, int shaderTyp
 		exit(EXIT_FAILURE);
 	}
 
-	const char * shaderCode = loadShaderAsString(shaderfilename);
+	const char * shaderCode = loadShaderAsString((char*) shaderfilename);
 	const char * codeArray[] = {shaderCode};
 	glShaderSource(*shaderD, 1, codeArray, NULL);
 
@@ -57,13 +59,13 @@ void prepareShader (unsigned int * shaderD, char * shaderfilename, int shaderTyp
 	glGetShaderiv(*shaderD, GL_COMPILE_STATUS, &result);
 	if (result == GL_FALSE)
 	{
-		fprintf(stderr, "Vertex shader compilation failed!\n");
+		fprintf(stderr, "%s shader compilation failed!\n", shaderType == GL_VERTEX_SHADER ? "Vertex" : "Fragment");
 
 		int logLen;
 		glGetShaderiv(*shaderD, GL_INFO_LOG_LENGTH, &logLen);
 		if (logLen > 0)
 		{
-			char * log = malloc(logLen);
+			char * log = (char*) malloc(logLen);
 
 			GLsizei written;
 			glGetShaderInfoLog(*shaderD, logLen, &written, log);
@@ -77,22 +79,18 @@ void prepareShader (unsigned int * shaderD, char * shaderfilename, int shaderTyp
 	return;
 }
 
-void prepareProgram (unsigned int * programD,
-		unsigned int * shaders, int n)
+void prepareProgram (GLuint * programD, GLuint * shaders, int n)
 {
 	*programD = glCreateProgram();
+
 	if (*programD == 0)
 	{
 		fprintf(stderr, "Error creating program object.\n");
 		exit(EXIT_FAILURE);
 	}
 
-	int i = 0;
-	while (i < n)
-	{
+	for (int i = 0; i < n; ++i)
 		glAttachShader(*programD, shaders[i]);
-		++i;
-	}
 
 	glLinkProgram(*programD);
 
@@ -106,7 +104,7 @@ void prepareProgram (unsigned int * programD,
 		glGetProgramiv(*programD, GL_INFO_LOG_LENGTH, &logLen);
 		if (logLen > 0)
 		{
-			char * log = malloc(logLen);
+			char * log = (char*) malloc(logLen);
 			GLsizei written;
 			glGetProgramInfoLog(*programD, logLen, &written, log);
 			fprintf(stderr, "Program log:\n%s", log);
@@ -115,3 +113,5 @@ void prepareProgram (unsigned int * programD,
 		}
 	}
 }
+
+#endif

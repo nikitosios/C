@@ -134,6 +134,7 @@ int main (void)
 
 	double time, lastTime;
 	mat4_t projection, view, model, MVP;
+	mat4_t rotation, translation, scaling;
 
 	lastTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window))
@@ -145,6 +146,7 @@ int main (void)
 			lastTime = time;
 		}
 
+		glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glUseProgram(programD);
@@ -152,7 +154,9 @@ int main (void)
 		unsigned int MVPpos;
 		MVPpos = glGetUniformLocation(programD, "MVP");
 
-		mat4_t rotation, translation, scaling, model;
+		projection = m4_perspective(45.0f, 1024.0f / 768.0f, 0.1f, 100.0f);
+		view = m4_look_at(vec3(0.0f, 0.0f, 3.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+
 		MVP = m4_perspective(45.0f, 1024.0f / 768.0f, 0.1f, 100.0f);
 		MVP = m4_mul(MVP, m4_look_at(vec3(0.0f, 0.0f, 3.0f),
 					vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f)));
@@ -162,9 +166,8 @@ int main (void)
 		model = m4_mul(translation, m4_mul(rotation, scaling));
 		MVP = m4_mul(MVP, model);
 		
+		glBindVertexArray(vertexattributes);
 		glUniformMatrix4fv(MVPpos, 1, GL_FALSE, (float *) &MVP);
-
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 		glDrawArrays(GL_TRIANGLES, 0, resolution * resolution * 6 * 3);
 
 		glfwSwapBuffers(window);

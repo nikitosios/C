@@ -1,8 +1,8 @@
 CC=gcc
-CFLAGS=
-LDFLAGS=-lm -lGL -lGLEW -lglfw
+CFLAGS=--std=c11
+LDFLAGS=-lm -lGL -lGLEW -lglfw -lSOIL
 SRCS=src/*.c
-EXE=sphere
+EXE=learn
 
 all: clean $(EXE)
 
@@ -10,4 +10,8 @@ $(EXE): $(SRCS)
 	$(CC) $(CFLAGS) -o $(EXE) $(SRCS) $(LDFLAGS)
 
 clean:
+	rm -rf $(EXE)
+
+.PHONY: clean $(EXE)
+	./$(EXE)
 	rm -rf $(EXE)
