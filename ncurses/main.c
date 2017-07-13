@@ -10,7 +10,7 @@
 int main (void)
 {
 	WINDOW *my_wins[8];
-	PANEL my_panels[8];
+	PANEL *my_panels[8];
 	int ch;
 
 	initscr();
@@ -31,16 +31,18 @@ int main (void)
 	my_wins[0] = newwin(roundf(maxy / 5), roundf(maxx / 8), 0, 0);
 	my_wins[1] = newwin(roundf(maxy / 5), roundf(maxx / 8 * 6), 0, roundf(maxx / 8));
 	my_wins[2] = newwin(roundf(maxy / 5), roundf(maxx / 8), 0, roundf(maxx - maxx / 8));
-	my_wins[3] = newwin(roundf(maxy / 5 * 3), roundf(maxx / 2), roundf(maxy / 5 + 1), 0);
-	my_wins[4] = newwin(roundf(maxy / 5 * 3), roundf(maxx / 2), roundf(maxy / 5 + 1), roundf(maxx / 2));
+	my_wins[3] = newwin(maxy - (maxy / 2 == (int) (maxy / 2) ? 1 : 0) - roundf(maxy / 5 * 2), roundf(maxx / 2), roundf(maxy / 5), 0);
+	my_wins[4] = newwin(maxy - (maxy / 2 == (int) (maxy / 2) ? 1 : 0) - roundf(maxy / 5 * 2), roundf(maxx / 2), roundf(maxy / 5), roundf(maxx / 2));
 	my_wins[5] = newwin(roundf(maxy / 5), roundf(maxx / 8), roundf(maxy / 5 * 4), 0);
 	my_wins[6] = newwin(roundf(maxy / 5), roundf(maxx / 8 * 6), roundf(maxy / 5 * 4), roundf(maxx / 8));
 	my_wins[7] = newwin(roundf(maxy / 5), roundf(maxx / 8), roundf(maxy / 5 * 4), roundf(maxx / 8 * 7));
 
 	for (int i = 0; i < 8; ++i)
+	{
+		my_panels[i] = my_wins[i];
 		box(my_wins[i], 0, 0);
-	for (int i = 0; i < 8; ++i)
 		wrefresh(my_wins[i]);
+	}
 
 	getch();
 	endwin();
