@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-Wall -O2
 LDFLAGS=-lm -lcurl
 SRCS=src/*.c
-EXE=parser
+EXE=curl
 
 all: clean $(EXE)
 
