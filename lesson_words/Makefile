@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -O2 -g
+CFLAGS=-Wall -Wextra -O2 -g --std=c11
 LDFLAGS=-lm -lcurl
 SRCS=src/*.c
 EXE=repeat_words
