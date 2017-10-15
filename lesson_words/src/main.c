@@ -39,32 +39,28 @@ int parse (size_t * ip, size_t * qp, int n, char *** russianp,
 	char ** russian = *russianp;
 	char ** nrussian = *nrussianp;
 
-	for (; strncmp(mem->buffer + i, "<strong>", strlen("<strong>"));
-			i++);
+	for (; strncmp(mem->buffer + i, "<strong>", strlen("<strong>")); i++);
 	i += strlen("<strong>");
 	for (q = i; strncmp(mem->buffer + q, "</strong>",
 				strlen("</strong>")); q++);
-	buffer = malloc(sizeof(char *) * n); memcpy(buffer, nrussian,
-			sizeof(char *) * n);
+	buffer = malloc(sizeof(char *) * n);
+	memcpy(buffer, nrussian, sizeof(char *) * n);
 	nrussian = (char **) realloc(nrussian, sizeof(char *) * (n + 1));
 	memcpy(nrussian, buffer, sizeof(char *) * n);
 	nrussian[n] = malloc((q - i) * sizeof(char *));
 	memcpy(nrussian[n], mem->buffer + i, (q - i) * sizeof(char *));
 	nrussian[n][q - i] = '\0';
+	printf("%s\n", nrussian[n]);
+	i = q + strlen("</strong> ");
 	for (; strncmp(mem->buffer + i, "<br", strlen("<br")) &&
 			strncmp(mem->buffer + i, "</div>", strlen("</div>")) &&
 			strncmp(mem->buffer + i, "<span ", strlen("<span ")); i++);
-	l = i;
-	q = i;
-	for (; mem->buffer[i] != '\n'; i--);
-	for (; strncmp(mem->buffer + i - strlen("</strong>"), "</strong>",
-				strlen("</strong>")); i++);
-	for (; mem->buffer[i] == ' '; i++);
+	q = i; l = q;
 	memcpy(buffer, russian, sizeof(char *) * n);
 	russian = (char **) realloc(russian, sizeof(char *) * (n + 1));
 	memcpy(russian, buffer, sizeof(char *) * n);
 	free(buffer);
-	russian[n] = malloc(q - i);
+	russian[n] = malloc(q - i + 1);
 	memcpy(russian[n], mem->buffer + i, q - i);
 	russian[n][q - i] = '\0';
 	if (!strncmp(mem->buffer + l, "</div>", strlen("</div>")))
@@ -130,17 +126,13 @@ int main (int argc, char ** argv)
 		size_t i, q;
 		for (i = 0; strncmp(mem->buffer + i, "Словарь", strlen("Словарь"));
 				i++);
-		for (int n = 0; n < 40; n++)
-			if (parse(&i, &q, n, &russian, &nrussian, &s, mem)) break;
+		for (int n = 0; n < 76; n++)
+			if (parse(&i, &q, n, &russian, &nrussian, &s, mem) == 1) break;
 	}
-	printf("All right.\n");
 
 	free(mem->buffer);
 	mem->size = 0;
 	free(mem);
-
-	for (int m = 0; (long) m < (long) s; m++)
-		printf("%s - %s\n", nrussian[m], russian[m]);
 
 	srand(time(NULL));
 	char ** rus, ** nrus;
