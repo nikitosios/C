@@ -7,9 +7,7 @@
 #include <curl/easy.h>
 #define URL "http://lingust.ru/"
 
-struct BufferData {
-	char * buffer;
-	size_t size;
+struct BufferData { char * buffer; size_t size;
 };
 
 static size_t write_callback (void * ptr, size_t size, size_t nmemb,
@@ -49,6 +47,13 @@ int parse (size_t * ip, size_t * qp, int n, char *** russianp,
 	nrussian[n] = malloc((q - i) * sizeof(char *));
 	memcpy(nrussian[n], mem->buffer + i, (q - i) * sizeof(char *));
 	nrussian[n][q - i] = '\0';
+	int j;
+	for (j = 0; j < strlen(nrussian[n]) && (nrussian[n][j] == '\n' ||
+				nrussian[n][j] == ' '); j++);
+	nrussian[n] = nrussian[n] + j;
+	for (j = strlen(nrussian[n]) - 1; nrussian[n][j] == '\n' ||
+			nrussian[n][j] == ' '; j--);
+	nrussian[n][j + 1] = '\0';
 	i = q + strlen("</strong>");
 	for (q = i; strncmp(mem->buffer + q, "<br", strlen("<br")) &&
 			strncmp(mem->buffer + q, "</div>", strlen("</div>")) &&
@@ -61,6 +66,12 @@ int parse (size_t * ip, size_t * qp, int n, char *** russianp,
 	russian[n] = malloc(q - i + 1);
 	memcpy(russian[n], mem->buffer + i, q - i);
 	russian[n][q - i] = '\0';
+	for (j = 0; j < strlen(russian[n]) && (russian[n][j] == '\n' ||
+				russian[n][j] == ' '); j++);
+	russian[n] = russian[n] + j;
+	for (j = strlen(russian[n]) - 1; russian[n][j] == '\n' ||
+			russian[n][j] == ' '; j--);
+	russian[n][j + 1] = '\0';
 	if (!strncmp(mem->buffer + l, "</div>", strlen("</div>")))
 	{
 		size_t k = l + strlen("</div>") + 1;
@@ -99,7 +110,7 @@ int main (int argc, char ** argv)
 		memcpy(lesson, argv[2], strlen(argv[2]) + 1);
 	} else {
 		language = "italiano/italiano-lezioni";
-		lesson = "lezione1";
+		lesson = "lezione6";
 	}
 
 	memcpy(url, URL, strlen(URL));
@@ -140,7 +151,6 @@ int main (int argc, char ** argv)
 	srand(time(NULL));
 	char * buf;
     int pos, pos2;
-	for (int j = 0; j < s; j++) printf("%s - %s\n", nrussian[j], russian[j]);
     for (size_t i = 0; i < rand() % 50 + s; i++)
     {
         pos = rand() % s;
@@ -157,7 +167,7 @@ int main (int argc, char ** argv)
 	for (size_t i = 0; i < s; i++) {
 		printf("Как будет %s по-итальянски?\n", russian[i]);
 		while (fgetc(stdin) != '\n');
-		printf("%s\n", nrussian[i]);
+		printf("%s\n\n", nrussian[i]);
 	}
 	free(russian);
 	free(nrussian);
