@@ -5,7 +5,6 @@
 #include <math.h>
 #include <curl/curl.h>
 #include <curl/easy.h>
-
 #define URL "http://lingust.ru/"
 
 struct BufferData {
@@ -30,7 +29,7 @@ static size_t write_callback (void * ptr, size_t size, size_t nmemb,
 }
 
 int parse (size_t * ip, size_t * qp, int n, char *** russianp,
-		char *** nrussianp, size_t * s, struct BufferData * mem)
+		char *** nrussianp, struct BufferData * mem)
 {
 	size_t i = *ip;
 	size_t q = *qp;
@@ -50,12 +49,11 @@ int parse (size_t * ip, size_t * qp, int n, char *** russianp,
 	nrussian[n] = malloc((q - i) * sizeof(char *));
 	memcpy(nrussian[n], mem->buffer + i, (q - i) * sizeof(char *));
 	nrussian[n][q - i] = '\0';
-	printf("%s\n", nrussian[n]);
-	i = q + strlen("</strong> ");
-	for (; strncmp(mem->buffer + i, "<br", strlen("<br")) &&
-			strncmp(mem->buffer + i, "</div>", strlen("</div>")) &&
-			strncmp(mem->buffer + i, "<span ", strlen("<span ")); i++);
-	q = i; l = q;
+	i = q + strlen("</strong>");
+	for (q = i; strncmp(mem->buffer + q, "<br", strlen("<br")) &&
+			strncmp(mem->buffer + q, "</div>", strlen("</div>")) &&
+			strncmp(mem->buffer + q, "<span ", strlen("<span ")); q++);
+	l = q;
 	memcpy(buffer, russian, sizeof(char *) * n);
 	russian = (char **) realloc(russian, sizeof(char *) * (n + 1));
 	memcpy(russian, buffer, sizeof(char *) * n);
@@ -65,14 +63,14 @@ int parse (size_t * ip, size_t * qp, int n, char *** russianp,
 	russian[n][q - i] = '\0';
 	if (!strncmp(mem->buffer + l, "</div>", strlen("</div>")))
 	{
-		size_t k = l + strlen("</div>");
+		size_t k = l + strlen("</div>") + 1;
 		for (; mem->buffer[k] == ' ' || mem->buffer[k] == '\n'; k++);
 		if (!strncmp(mem->buffer + k, "</div>", strlen("</div>"))) return 1;
 	}
+	i = q;
 
 	*ip = i;
 	*qp = q;
-	(*s)++;
 	*russianp = russian;
 	*nrussianp = nrussian;
 	return 0;
@@ -126,8 +124,13 @@ int main (int argc, char ** argv)
 		size_t i, q;
 		for (i = 0; strncmp(mem->buffer + i, "Словарь", strlen("Словарь"));
 				i++);
-		for (int n = 0; n < 76; n++)
-			if (parse(&i, &q, n, &russian, &nrussian, &s, mem) == 1) break;
+		for (int n = 0;; n++) {
+			if (parse(&i, &q, n, &russian, &nrussian, mem)) {
+				s = n + 1;
+				break;
+			}
+			s = n + 1;
+		}
 	}
 
 	free(mem->buffer);
@@ -135,37 +138,28 @@ int main (int argc, char ** argv)
 	free(mem);
 
 	srand(time(NULL));
-	char ** rus, ** nrus;
-	rus = NULL;
-	nrus = NULL;
-	int q;
-	for (int i = 0; (long) i < (long) s; i++)
-	{
-		q = rand() % (s - i);
-		printf("i: %d, s: %ld, q: %d.\n", i, s, q);
-		printf("Как будет %s на итальянском?\n", russian[q]);
+	char * buf;
+    int pos, pos2;
+	for (int j = 0; j < s; j++) printf("%s - %s\n", nrussian[j], russian[j]);
+    for (size_t i = 0; i < rand() % 50 + s; i++)
+    {
+        pos = rand() % s;
+        pos2 = rand() % s;
+		
+        buf = russian[pos];
+        russian[pos] = russian[pos2];
+        russian[pos2] = buf;
+
+		buf = nrussian[pos];
+		nrussian[pos] = nrussian[pos2];
+		nrussian[pos2] = buf;
+    }
+	for (size_t i = 0; i < s; i++) {
+		printf("Как будет %s по-итальянски?\n", russian[i]);
 		while (fgetc(stdin) != '\n');
-		printf("%s\n", nrussian[q]);
-		rus = malloc((s - i) * sizeof(char *));
-		nrus = malloc((s - i) * sizeof(char *));
-		memcpy(rus, russian, (s - i) * sizeof(char *));
-		memcpy(nrus, nrussian, (s - i) * sizeof(char *));
-		free(russian);
-		free(nrussian);
-		russian = malloc((s - i) * sizeof(char *));
-		nrussian = malloc((s - i) * sizeof(char *));
-		int j = 0;
-		for (int p = 0; (long) p < (long) s; p++)
-		{
-			if (p != q)
-			{
-				russian[j] = rus[p];
-				nrussian[j] = nrus[p];
-				j++;
-			}
-		}
-		free(rus);
-		free(nrus);
+		printf("%s\n", nrussian[i]);
 	}
+	free(russian);
+	free(nrussian);
 	return 0;
 }
