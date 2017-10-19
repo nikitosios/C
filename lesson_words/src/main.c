@@ -47,7 +47,7 @@ int parse (size_t * ip, size_t * qp, int n, char *** russianp,
 	nrussian[n] = malloc((q - i) * sizeof(char *));
 	memcpy(nrussian[n], mem->buffer + i, (q - i) * sizeof(char *));
 	nrussian[n][q - i] = '\0';
-	int j;
+	size_t j;
 	for (j = 0; j < strlen(nrussian[n]) && (nrussian[n][j] == '\n' ||
 				nrussian[n][j] == ' '); j++);
 	nrussian[n] = nrussian[n] + j;
