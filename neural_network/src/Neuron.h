@@ -20,20 +20,9 @@ typedef struct {
     double output;
 } Neuron;
 
-typedef struct {
-    int numofneurons;
-    int numofprevneurons;
-    double * data;
-    Neuron ** neurons;
-} Layer;
-
 Neuron * new_Neuron (double * inputs, double * weights, size_t size, NeuronType type);
-double neuron_activate (Neuron * neuron, double * i, double * w, size_t size);
-double neuron_derivativate (Neuron * neuron, double out);
+double neuron_activator (Neuron * neuron, double * i, double * w, size_t size);
+double neuron_derivativator (Neuron * neuron, double out);
 double neuron_gradientor (Neuron * neuron, double error, double dif, double g_sum);
-
-Layer * new_Layer (int non, int nopn, NeuronType nt);
-void layer_setData (Layer * layer, double * data);
-double ** layer_weightInitialize (Layer * layer, MemoryMode mm, NeuronType nt);
 
 #endif

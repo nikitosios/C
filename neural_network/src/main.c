@@ -4,9 +4,12 @@
 #include <math.h>
 #include <time.h>
 
-#include "Neuron.h"
+#include "Network.h"
 
 int main (void)
 {
+	Network * net = new_Network();
+	train(net);
+	test(net);
 	return 0;
 }
