@@ -4,7 +4,7 @@
 #include <math.h>
 #include <time.h>
 
-#include "neuron.h"
+#include "Neuron.h"
 
 int main (void)
 {
