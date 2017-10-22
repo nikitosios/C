@@ -9,7 +9,10 @@
 int main (void)
 {
 	Network * net = new_Network();
+	printf("Done.\n");
 	train(net);
+	printf("Done.\n");
 	test(net);
+	printf("Done.\n");
 	return 0;
 }

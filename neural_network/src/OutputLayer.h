@@ -2,11 +2,10 @@
 #define OUTPUTLAYER_H
 
 #include "Layer.h"
+#include "InputLayer.h"
 #include "Network.h"
 
-typedef Layer OutputLayer;
-
-void outputLayer_recognize (Layer * layer, Network * net, Layer nextLayer);
+void outputLayer_recognize (Layer * layer, Network * net, Layer * nextLayer);
 double * outputLayer_backwardPass (Layer * layer, double * errors);
 
 #endif

@@ -2,6 +2,7 @@
 #define LAYER_H
 
 #include "Neuron.h"
+#include "InputLayer.h"
 
 typedef struct {
     int numofneurons;
@@ -9,6 +10,17 @@ typedef struct {
     double * data;
     Neuron ** neurons;
 } Layer;
+
+typedef Layer HiddenLayer;
+typedef Layer OutputLayer;
+
+typedef struct {
+	InputLayer * inputLayer;
+	HiddenLayer * hiddenLayer;
+	OutputLayer * outputLayer;
+	double * fact;
+    size_t factLength;
+} Network;
 
 Layer * new_Layer (int non, int nopn, NeuronType nt);
 void layer_setData (Layer * layer, double * data);

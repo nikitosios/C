@@ -8,6 +8,7 @@ typedef struct {
 
 typedef struct {
 	Tuple ** trainset;
+    size_t trainsetLength;
 } InputLayer;
 
 InputLayer * new_InputLayer (void);

@@ -4,6 +4,9 @@
 #include <time.h>
 #include <math.h>
 
+#include "InputLayer.h"
+#include "HiddenLayer.h"
+#include "OutputLayer.h"
 #include "Network.h"
 
 #define NUMOFINPUTS 1920 * 1080 * 3
@@ -13,9 +16,12 @@ Network * new_Network (void)
 	Network * network;
 	network = malloc(sizeof(Network));
 	
-	network->inputLayer = new_inputLayer();
-	nwtwork->hiddenLayer = new_Layer(NUMOFINPUTS, NUMOFINPUTS / 3, NEURONTYPE_HIDDEN);
-	network->outputLayer = new_Layer(33, 1920 * 1080 *, NEURONTYPE_OUTPUT);
+	network->inputLayer = new_InputLayer();
+	printf("Input layer have been initialized.\n");
+	network->hiddenLayer = new_Layer(NUMOFINPUTS / 3, NUMOFINPUTS, NEURONTYPE_HIDDEN);
+	printf("Hidden layer have been initialized.\n");
+	network->outputLayer = new_Layer(33, NUMOFINPUTS / 3, NEURONTYPE_OUTPUT);
+	printf("Output layer have been initialized.\n");
 	network->factLength = 33;
 	network->fact = malloc(network->factLength * sizeof(double));
 
@@ -33,7 +39,7 @@ double getMSE (double * errors, size_t length)
 double getCost (double * mses, size_t length)
 {
 	double sum = 0;
-	for (int i = 0; i < length; i++)
+	for (size_t i = 0; i < length; i++)
 		sum += mses[i];
 	return (sum / (double) length);
 }
@@ -44,33 +50,33 @@ void train (Network * net)
 	double temp_cost = 0;
 	do
 	{
-		for (int i = 0; i < net->inputLayer->trainsetLength; i++)
+		for (size_t i = 0; i < net->inputLayer->trainsetLength; i++)
 		{
-			hiddenLayer_setData(net->hiddenLayer, net->inputLayer->trainset[i].a1);
+			layer_setData(net->hiddenLayer, net->inputLayer->trainset[i]->a1);
 			hiddenLayer_recognize(net->hiddenLayer, NULL, net->outputLayer);
 			outputLayer_recognize(net->outputLayer, net, NULL);
 			double * errors = malloc(NUMOFINPUTS * sizeof(double));
 			for (int j = 0; j < NUMOFINPUTS; j++)
-				errors[j] = net->inputLayer->trainset[i]->a2 - net->fact[j];
+				errors[j] = net->inputLayer->trainset[i]->a2[j] - net->fact[j];
 			temp_mses[i] = getMSE(errors, NUMOFINPUTS);
-			double * temp_gsums = outputLayer_backwardPass(net->outputLayer, errors, NUMOFINPUTS);
+			double * temp_gsums = outputLayer_backwardPass(net->outputLayer, errors);
 			hiddenLayer_backwardPass(net->hiddenLayer, temp_gsums);
 		}
-		temp_cost = getCost(temp_mses);
+		temp_cost = getCost(temp_mses, net->inputLayer->trainsetLength);
 		printf("%f\n", temp_cost);
-	} while (temp_cost > threshold);
+	} while (temp_cost > THRESHOLD);
 	layer_weightInitialize(net->hiddenLayer, MEMORYMODE_SET, NEURONTYPE_HIDDEN);
 	layer_weightInitialize(net->outputLayer, MEMORYMODE_SET, NEURONTYPE_OUTPUT);
 }
 
 void test (Network * net)
 {
-	for (int i = 0; i < net->inputLayer->trainSetLength; i++)
+	for (size_t i = 0; i < net->inputLayer->trainsetLength; i++)
 	{
-		hiddenLayer_setData(net->hiddenLayer, net->inputLayer->trainset[i]->a1);
+		layer_setData(net->hiddenLayer, net->inputLayer->trainset[i]->a1);
 		hiddenLayer_recognize(net->hiddenLayer, NULL, net->outputLayer);
 		outputLayer_recognize(net->outputLayer, net, NULL);
-		for (int j = 0; j < net->factLength; j++)
+		for (size_t j = 0; j < net->factLength; j++)
 			printf("%f\n", net->fact[j]);
 		printf("\n");
 	}

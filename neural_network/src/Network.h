@@ -7,13 +7,6 @@
 
 #define THRESHOLD 0.001
 
-typedef struct {
-	InputLayer * inputLayer;
-	HiddenLayer * hiddenLayer;
-	OutputLayer * outputLayer;
-	double * fact;
-} Network;
-
 Network * new_Network (void);
 void train (Network * net);
 void test (Network * net);
